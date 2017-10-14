@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Vue.js routing demo</title>
+  <link rel='stylesheet prefetch' href='/css/style.css'>
+</head>
+
+<body>
+  <div id="app">
+    <section class="hero">
+      <div class="hero-body">
+        <div class="container">
+          <h1 class="title">
+            <router-link to="/">Ticketless</router-link>
+          </h1>
+          <h2 class="subtitle">
+            Gigs you don't want to miss!
+          </h2>
+        </div>
+      </div>
+    </section>
+
+    <div class="container">
+      <router-view></router-view>
+    </div>
+
+    <footer class="footer" style="margin: 4em 0 0 0">
+      <div class="container">
+        <div class="content has-text-centered">
+          <p>
+            <strong>Ticketless</strong> by <a href="https://serverlesslab.com">ServerlessLab</a>. A sample application for learning Serverless on AWS.</p>
+          <p>The <a href="https://github.com/lucpod/ticketless">source code</a> is licensed
+            <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content
+            is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.
+          </p>
+          <p>
+            <a href="http://bulma.io" target="_blank">
+              <small>Made with <strong>bulma</strong></small>
+            </a>
+          </p>
+        </div>
+      </div>
+    </footer>
+  </div>
+  <script  src="/js/vendors.js"></script>
+  <script  src="/js/config.js"></script>
+  <script  src="/js/app.js"></script>
+</body>
+</html>
