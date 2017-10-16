@@ -1,15 +1,3 @@
-const gigs = [1,2,3,4,5,6,7,8,9,10].map(i =>({
-  slug: `concert-${i}`,
-  bandName: `band ${i}`,
-  city: 'Dublin',
-  date: '2017-12-31',
-  venue: 'Vicar Street',
-  capacity: 3000,
-  description: 'Some lorem ipsum here',
-  image: `https://picsum.photos/600/200?image=${100 * i}`,
-  price: 50
-}))
-
 const getGigs = (cb) => {
   setTimeout(() => cb(null, gigs), 1000)
 }
@@ -32,7 +20,7 @@ const GigCard = {
   <div class="card-image">
     <figure class="image is-3by1">
       <router-link :to="'/gig/' + slug">
-        <img class="card-img-top" :src="image" :alt="bandName">
+        <img class="card-img-top" :src="'/images/' + image" :alt="bandName">
       </router-link>
     </figure>
   </div>
@@ -113,7 +101,7 @@ const GigPage = {
         <div class="column is-9">
           <div class="content">
             <p>
-              <img :src="gig.image" />
+              <img :src="'/images/' + gig.image" />
             </p>
             <p>
               {{gig.description}}
