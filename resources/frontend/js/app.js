@@ -1,16 +1,51 @@
-const getGigs = (cb) => {
-  setTimeout(() => cb(null, gigs), 1000)
+if (!window.apiBasePath) {
+  console.warn('USING MOCK DATA, configure your apiBasePath')
+  // load the mock data if no API is available
+  axios.get('/js/data.json')
+    .then((response) => {
+      window.gigs = response.data
+    })
 }
 
-const getGig = (slug, cb) => {
+const getGigsMock = (cb) => {
+  if (!window.gigs) return setTimeout(() => {getGigsMock(cb)}, 1000)
+  setTimeout(() => cb(null, gigs), 200)
+}
+
+const getGigMock = (slug, cb) => {
+  if (!window.gigs) return setTimeout(() => {getGigMock(slug, cb)}, 1000)
   setTimeout(() => {
-    const gig = gigs.find(gig => gig.slug === slug)
+    const gig = window.gigs.find(gig => gig.slug === slug)
     if (!gig) {
       return cb(new Error('Gig Not found'))
     }
 
     return cb(null, gig)
-  }, 2000)
+  }, 200)
+}
+
+const getGigs = (cb) => {
+  if (!window.apiBasePath) return getGigsMock(cb)
+
+  axios.get(`${window.apiBasePath}/gigs`)
+    .then((response) => {
+      return cb(null, response.data.gigs)
+    })
+    .catch(err => {
+      return cb(err)
+    })
+}
+
+const getGig = (slug, cb) => {
+  if (!window.apiBasePath) return getGigMock(slug, cb)
+
+  axios.get(`${window.apiBasePath}/gigs/${slug}`)
+    .then((response) => {
+      return cb(null, response.data)
+    })
+    .catch(err => {
+      return cb(err)
+    })
 }
 
 const GigCard = {
