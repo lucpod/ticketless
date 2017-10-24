@@ -182,6 +182,7 @@ const GigPage = {
               <strong>{{gig.price}} EUR</strong>
             </div>
           </div>
+          <a href="#buy" class="button is-outlined is-link" v-on:click="scrollToBuy">Buy ticket</a>
         </div>
       </div>
     </section>
@@ -190,7 +191,7 @@ const GigPage = {
       <div class="columns">
         <div class="column is-9">
           <div class="content">
-            <h3>Buy a ticket</h3>
+            <h3 id="buy">Buy a ticket</h3>
             <a href="#" v-on:click="fillWithDemoData">
               <small>(quick fill form)</small>
             </a>
@@ -453,6 +454,11 @@ const GigPage = {
       this.payment.cardExpiryYear = '2020'
       this.payment.cardCVC = '123'
       this.payment.disclaimerAccepted = true
+    },
+    scrollToBuy (event) {
+      event.preventDefault()
+      const sc = document.scrollingElement || document.documentElement
+      sc.scrollTop = document.getElementById('buy').offsetTop
     }
   }
 }
@@ -462,7 +468,10 @@ const routes = [
   { path: '/gig/:slug', component: GigPage }
 ]
 
-const router = new VueRouter({routes, mode: 'history'})
+const router = new VueRouter({
+  routes,
+  mode: 'history'
+})
 
 Vue.use(VeeValidate)
 const app = new Vue({
