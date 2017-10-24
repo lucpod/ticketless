@@ -4,12 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "http-server ."
+    "start": "ws --spa index.html"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "http-server": "^0.10.0"
-  }
+    "local-web-server": "^2.2.4"
+  },
+  "dependencies": {}
 }

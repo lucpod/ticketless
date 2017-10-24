@@ -168,22 +168,23 @@ const GigPage = {
           <div class="content">
             <h3>Buy a ticket</h3>
           </div>
+          <input type="hidden" v-model="payment.gig">
           <div class="field">
             <label class="label">Name</label>
             <div class="control">
-              <input class="input" type="text" placeholder="e.g Alex Smith">
+              <input class="input" type="text" placeholder="e.g Alex Smith" v-model="payment.name">
             </div>
           </div>
           <div class="field">
             <label class="label">Email</label>
             <div class="control">
-              <input class="input" type="email" placeholder="e.g. alexsmith@gmail.com">
+              <input class="input" type="email" placeholder="e.g. alexsmith@gmail.com" v-model="payment.email">
             </div>
           </div>
           <div class="field">
             <label class="label">Credit Card Number</label>
             <div class="control">
-              <input class="input" type="email" placeholder="e.g. 1234 5678 9012 3456">
+              <input class="input" type="text" placeholder="e.g. 1234 5678 9012 3456" v-model="payment.cardNumber">
             </div>
           </div>
           <div class="columns">
@@ -192,19 +193,10 @@ const GigPage = {
                 <label class="label">Expiry Month</label>
                 <div class="control">
                   <div class="select">
-                    <select>
-                      <option> 1 - Jan</option>
-                      <option> 2 - Feb</option>
-                      <option> 3 - Mar</option>
-                      <option> 4 - Apr</option>
-                      <option> 5 - May</option>
-                      <option> 6 - Jun</option>
-                      <option> 7 - Jul</option>
-                      <option> 8 - Aug</option>
-                      <option> 9 - Sep</option>
-                      <option>10 - Oct</option>
-                      <option>11 - Nov</option>
-                      <option>12 - Dec</option>
+                    <select v-model="payment.cardExpiryMonth">
+                      <option v-for="option in cardExpiryMonthOptions" v-bind:value="option.value">
+                        {{ option.text }}
+                      </option>
                     </select>
                   </div>
                 </div>
@@ -215,14 +207,10 @@ const GigPage = {
                 <label class="label">Expiry Year</label>
                 <div class="control">
                   <div class="select">
-                    <select>
-                      <option>2018</option>
-                      <option>2019</option>
-                      <option>2020</option>
-                      <option>2021</option>
-                      <option>2022</option>
-                      <option>2023</option>
-                      <option>2024</option>
+                    <select v-model="payment.cardExpiryYear">
+                      <option v-for="option in cardExpiryYearOptions">
+                        {{ option }}
+                      </option>
                     </select>
                   </div>
                 </div>
@@ -232,7 +220,7 @@ const GigPage = {
               <div class="field">
                 <label class="label">CVC</label>
                 <div class="control">
-                  <input class="input" type="email" placeholder="e.g. 123">
+                  <input class="input" type="text" placeholder="e.g. 123" v-model="payment.cardCVC">
                 </div>
               </div>
             </div>
@@ -240,8 +228,8 @@ const GigPage = {
           <div class="field">
             <div class="control">
               <label class="checkbox">
-                <input type="checkbox"> I understand this is a demo
-                site and that <strong>I don't have to use a real credit card</strong>                I own! No attempt to charge
+                <input type="checkbox" v-model="payment.disclaimerAccepted"> I understand this is a demo
+                site and that <strong>I don't have to use a real credit card</strong> I own! No attempt to charge
                 the card will be made anyway
                 :)
               </label>
@@ -252,6 +240,7 @@ const GigPage = {
               <button class="button is-primary is-large">Purchase</button>
             </div>
           </div>
+          <div><code><pre>{{ payment | json }}</pre></code></div>
         </div>
       </div>
     </section>
@@ -270,8 +259,34 @@ const GigPage = {
   data () {
     return {
       loading: false,
-      gig: null,
-      error: null
+      gig: undefined,
+      error: undefined,
+      payment: {
+        gig: undefined,
+        name: undefined,
+        email: undefined,
+        cardNumber: undefined,
+        cardExpiryMonth: undefined,
+        cardExpiryYear: undefined,
+        cardCVC: undefined,
+        disclaimerAccepted: undefined
+      },
+      cardExpiryMonthOptions: [
+        { text: '', value: undefined },
+        { text: '01 - Jan', value: 1 },
+        { text: '02 - Feb', value: 2 },
+        { text: '03 - Mar', value: 3 },
+        { text: '04 - Apr', value: 4 },
+        { text: '05 - May', value: 5 },
+        { text: '06 - Jun', value: 6 },
+        { text: '07 - Jul', value: 7 },
+        { text: '08 - Aug', value: 8 },
+        { text: '09 - Sep', value: 9 },
+        { text: '10 - Oct', value: 10 },
+        { text: '11 - Nov', value: 11 },
+        { text: '12 - Dec', value: 12 },
+      ],
+      cardExpiryYearOptions: ['', 2018, 2019, 2020, 2021, 2022, 2023, 2024]
     }
   },
   created () {
@@ -291,6 +306,7 @@ const GigPage = {
           this.error = err.toString()
         } else {
           this.gig = gig
+          this.payment.gig = gig.slug
         }
       })
     }

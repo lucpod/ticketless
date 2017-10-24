@@ -11,9 +11,9 @@ module.exports.createContent = (
   .sign({
     sub: customerName,
     aud: gigSlug,
-    iat: (new Date()).getTime(),
+    iat: Date.now(),
     nbf: (new Date(concertDate)).getTime(),
-    exp: (new Date(concertDate)).getTime() + 86400,
+    exp: (new Date(concertDate)).getTime() + 86400000,
     jti: sequenceId
   },
   privateKey,
@@ -22,5 +22,4 @@ module.exports.createContent = (
   }
 )
 
-
-module.exports.createQRCode = (content, cb) => qr.toString(content, {type:'svg'}, cb)
+module.exports.createQRCode = (content, cb) => qr.toString(content, { type:'svg' }, cb)
