@@ -191,6 +191,9 @@ const GigPage = {
         <div class="column is-9">
           <div class="content">
             <h3>Buy a ticket</h3>
+            <a href="#" v-on:click="fillWithDemoData">
+              <small>(quick fill form)</small>
+            </a>
           </div>
           <input type="hidden" v-model="payment.gig">
           <div class="field">
@@ -325,17 +328,14 @@ const GigPage = {
             </div>
           </div>
           <div v-show="paymentResult" class="notification is-primary">
-            <button class="delete" v-on:click="paymentResult = undefined"></button>
-            Payment processed correctly! you should receive an email with your ticket shortly
+            <button class="delete" v-on:click="paymentResult = null"></button>
+            <p>Payment processed correctly! you should receive an email with your ticket shortly.</p>
+            <p><small>You can buy a new ticket by entering a new name and a new email</small></p>
           </div>
           <div v-show="paymentError" class="notification is-danger">
-            <button class="delete" v-on:click="paymentError = undefined"></button>
-            Ooops, something went wrong with your payment! {{ paymentError }}
-          </div>
-          <div class="content">
-            <h3>Debug</h3>
-            <div><h4>Form Data</h4><pre><code>{{ payment | json }}</code></pre></div>
-            <div><h4>Form Validation Errors</h4><pre><code>{{ errors | json }}</code></pre></div>
+            <button class="delete" v-on:click="paymentError = null"></button>
+            <p>Ooops, something went wrong with your payment!</p>
+            <p><small><strong>{{paymentError}}</strong></small></p>
           </div>
         </div>
       </div>
@@ -434,7 +434,7 @@ const GigPage = {
         submitPayment(this.payment, (err, result) => {
           this.paymentInProgress = false
           if (err) {
-            return this.paymentError = err
+            return this.paymentError = err.message ? err.message : JSON.stringify(err)
           }
 
           this.paymentResult = result
@@ -443,6 +443,16 @@ const GigPage = {
           this.payment.email = undefined
         })
       }
+    },
+    fillWithDemoData (event) {
+      event.preventDefault()
+      this.payment.name = 'Alex Smith'
+      this.payment.email = 'alexsmith@gmail.com'
+      this.payment.cardNumber = '5454545454545454'
+      this.payment.cardExpiryMonth = '5'
+      this.payment.cardExpiryYear = '2020'
+      this.payment.cardCVC = '123'
+      this.payment.disclaimerAccepted = true
     }
   }
 }
