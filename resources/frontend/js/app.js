@@ -24,6 +24,18 @@ const getGigMock = (slug, cb) => {
   }, 200)
 }
 
+const submitPaymentMock = (payment, cb) => {
+  // can succeed or fail with 50% chance
+  const success = Math.random() >= 0.5
+  setTimeout(() => {
+    if (!success) {
+      return cb(new Error('Card declined'))
+    }
+
+    return cb(null, { success })
+  }, 2200)
+}
+
 const getGigs = (cb) => {
   if (!window.apiBasePath) return getGigsMock(cb)
 
@@ -48,10 +60,22 @@ const getGig = (slug, cb) => {
     })
 }
 
+const submitPayment = (payment, cb) => {
+  if (!window.apiBasePath) return submitPaymentMock(payment, cb)
+
+  axios.post(`${window.apiBasePath}/purchase`, payment)
+    .then((response) => {
+      return cb(null, response.data)
+    })
+    .catch(err => {
+      return cb(err)
+    })
+}
+
 const GigCard = {
   props: ['image', 'bandName', 'city', 'date', 'slug'],
   template: `
-<div class="card">
+<div class="card" style="height:100%">
   <div class="card-image">
     <figure class="image is-3by1">
       <router-link :to="'/gig/' + slug">
@@ -172,19 +196,46 @@ const GigPage = {
           <div class="field">
             <label class="label">Name</label>
             <div class="control">
-              <input class="input" type="text" placeholder="e.g Alex Smith" v-model="payment.name">
+              <input
+                name="name"
+                :class="{'input': true, 'is-danger': errors.has('name') }"
+                type="text"
+                :disabled="paymentInProgress"
+                v-validate="'required'"
+                placeholder="e.g Alex Smith"
+                v-model="payment.name"
+              />
+              <p v-show="errors.has('name')" class="help is-danger">{{ errors.first('name') }}</p>
             </div>
           </div>
           <div class="field">
             <label class="label">Email</label>
             <div class="control">
-              <input class="input" type="email" placeholder="e.g. alexsmith@gmail.com" v-model="payment.email">
+              <input
+                name="email"
+                :class="{'input': true, 'is-danger': errors.has('email') }"
+                type="email"
+                :disabled="paymentInProgress"
+                v-validate="'required|email'"
+                placeholder="e.g. alexsmith@gmail.com"
+                v-model="payment.email"
+              />
+              <p v-show="errors.has('email')" class="help is-danger">{{ errors.first('email') }}</p>
             </div>
           </div>
           <div class="field">
             <label class="label">Credit Card Number</label>
             <div class="control">
-              <input class="input" type="text" placeholder="e.g. 1234 5678 9012 3456" v-model="payment.cardNumber">
+              <input
+                name="cardNumber"
+                :class="{'input': true, 'is-danger': errors.has('cardNumber') }"
+                type="text"
+                :disabled="paymentInProgress"
+                v-validate="'required|credit_card'"
+                placeholder="e.g. 1234 5678 9012 3456"
+                v-model="payment.cardNumber"
+              />
+              <p v-show="errors.has('cardNumber')" class="help is-danger">{{ errors.first('cardNumber') }}</p>
             </div>
           </div>
           <div class="columns">
@@ -192,12 +243,19 @@ const GigPage = {
               <div class="field">
                 <label class="label">Expiry Month</label>
                 <div class="control">
-                  <div class="select">
-                    <select v-model="payment.cardExpiryMonth">
+                  <div :class="{'select': true, 'is-danger': errors.has('cardExpiryMonth') }">
+                    <select
+                      name="cardExpiryMonth"
+                      v-validate="{ required: true, in: cardExpiryMonthOptionsValues }"
+                      :disabled="paymentInProgress"
+                      v-model="payment.cardExpiryMonth"
+                    >
+                      <option value=""/>
                       <option v-for="option in cardExpiryMonthOptions" v-bind:value="option.value">
                         {{ option.text }}
                       </option>
                     </select>
+                    <p v-show="errors.has('cardExpiryMonth')" class="help is-danger">{{ errors.first('cardExpiryMonth') }}</p>
                   </div>
                 </div>
               </div>
@@ -206,12 +264,19 @@ const GigPage = {
               <div class="field">
                 <label class="label">Expiry Year</label>
                 <div class="control">
-                  <div class="select">
-                    <select v-model="payment.cardExpiryYear">
+                  <div :class="{'select': true, 'is-danger': errors.has('cardExpiryYear') }">
+                    <select
+                      name="cardExpiryYear"
+                      :disabled="paymentInProgress"
+                      v-validate="{ required: true, in: cardExpiryYearOptions }"
+                      v-model="payment.cardExpiryYear"
+                    >
+                      <option value=""/>
                       <option v-for="option in cardExpiryYearOptions">
                         {{ option }}
                       </option>
                     </select>
+                    <p v-show="errors.has('cardExpiryYear')" class="help is-danger">{{ errors.first('cardExpiryYear') }}</p>
                   </div>
                 </div>
               </div>
@@ -220,7 +285,16 @@ const GigPage = {
               <div class="field">
                 <label class="label">CVC</label>
                 <div class="control">
-                  <input class="input" type="text" placeholder="e.g. 123" v-model="payment.cardCVC">
+                  <input
+                    name="cardCVC"
+                    :class="{'input': true, 'is-danger': errors.has('cardCVC') }"
+                    type="text"
+                    :disabled="paymentInProgress"
+                    v-validate="{ required: true, regex: /^[0-9]{3,4}$/ }"
+                    placeholder="e.g. 123"
+                    v-model="payment.cardCVC"
+                  />
+                  <p v-show="errors.has('cardCVC')" class="help is-danger">{{ errors.first('cardCVC') }}</p>
                 </div>
               </div>
             </div>
@@ -228,19 +302,41 @@ const GigPage = {
           <div class="field">
             <div class="control">
               <label class="checkbox">
-                <input type="checkbox" v-model="payment.disclaimerAccepted"> I understand this is a demo
-                site and that <strong>I don't have to use a real credit card</strong> I own! No attempt to charge
-                the card will be made anyway
-                :)
+                <input
+                  name="disclaimerAccepted"
+                  type="checkbox"
+                  :disabled="paymentInProgress"
+                  v-validate="'required'"
+                  v-model="payment.disclaimerAccepted"
+                /> I understand this is a demo site and that
+                <strong>I don't have to use a real credit card</strong> I own!
+                No attempt to charge the card will be made anyway :)
+                <p v-show="errors.has('disclaimerAccepted')" class="help is-danger">{{ errors.first('disclaimerAccepted') }}</p>
               </label>
             </div>
           </div>
           <div class="field">
             <div class="control">
-              <button class="button is-primary is-large">Purchase</button>
+              <button
+                :disabled="isFormInvalid"
+                :class="{ 'button': true, 'is-primary': true, 'is-large': true, 'is-loading': paymentInProgress }"
+                v-on:click="submitPayment"
+              >Purchase</button>
             </div>
           </div>
-          <div><code><pre>{{ payment | json }}</pre></code></div>
+          <div v-show="paymentResult" class="notification is-primary">
+            <button class="delete" v-on:click="paymentResult = undefined"></button>
+            Payment processed correctly! you should receive an email with your ticket shortly
+          </div>
+          <div v-show="paymentError" class="notification is-danger">
+            <button class="delete" v-on:click="paymentError = undefined"></button>
+            Ooops, something went wrong with your payment! {{ paymentError }}
+          </div>
+          <div class="content">
+            <h3>Debug</h3>
+            <div><h4>Form Data</h4><pre><code>{{ payment | json }}</code></pre></div>
+            <div><h4>Form Validation Errors</h4><pre><code>{{ errors | json }}</code></pre></div>
+          </div>
         </div>
       </div>
     </section>
@@ -261,6 +357,9 @@ const GigPage = {
       loading: false,
       gig: undefined,
       error: undefined,
+      paymentInProgress: false,
+      paymentError: undefined,
+      paymentResult: undefined,
       payment: {
         gig: undefined,
         name: undefined,
@@ -272,7 +371,6 @@ const GigPage = {
         disclaimerAccepted: undefined
       },
       cardExpiryMonthOptions: [
-        { text: '', value: undefined },
         { text: '01 - Jan', value: 1 },
         { text: '02 - Feb', value: 2 },
         { text: '03 - Mar', value: 3 },
@@ -286,7 +384,25 @@ const GigPage = {
         { text: '11 - Nov', value: 11 },
         { text: '12 - Dec', value: 12 },
       ],
-      cardExpiryYearOptions: ['', 2018, 2019, 2020, 2021, 2022, 2023, 2024]
+      cardExpiryYearOptions: [2018, 2019, 2020, 2021, 2022, 2023, 2024]
+    }
+  },
+  computed: {
+    cardExpiryMonthOptionsValues: function () {
+      return this.cardExpiryMonthOptions.map(o => o.value)
+    },
+    isFormInvalid: function () {
+      return !(
+        this.errors.items.length === 0 &&
+        this.payment.gig &&
+        this.payment.name &&
+        this.payment.email &&
+        this.payment.cardNumber &&
+        this.payment.cardExpiryMonth &&
+        this.payment.cardExpiryYear &&
+        this.payment.cardCVC &&
+        this.payment.disclaimerAccepted
+      )
     }
   },
   created () {
@@ -309,6 +425,24 @@ const GigPage = {
           this.payment.gig = gig.slug
         }
       })
+    },
+    submitPayment () {
+      if (!this.isFormInvalid && !this.paymentInProgress) {
+        this.paymentInProgress = true
+        this.paymentError = null
+        this.paymentResult = null
+        submitPayment(this.payment, (err, result) => {
+          this.paymentInProgress = false
+          if (err) {
+            return this.paymentError = err
+          }
+
+          this.paymentResult = result
+          // resets name and email to easily allow the quick purchase of another ticket
+          this.payment.name = undefined
+          this.payment.email = undefined
+        })
+      }
     }
   }
 }
@@ -320,6 +454,7 @@ const routes = [
 
 const router = new VueRouter({routes, mode: 'history'})
 
+Vue.use(VeeValidate)
 const app = new Vue({
   router,
   data: {}

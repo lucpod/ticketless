@@ -8,14 +8,23 @@
 
 <body>
   <div id="app">
-    <section class="hero">
-      <div class="hero-body">
-        <div class="container">
-          <h1 class="title">
-            <router-link to="/">Ticketless</router-link>
+    <nav class="navbar is-dark is-boxed" role="navigation" aria-label="navigation">
+      <div class="container">
+        <div class="navbar-brand">
+          <router-link to="/" class="navbar-item">
+            <img src="/images/ticketless-logo-white.svg" alt="Ticketless" height="28">
+          </router-link>
+        </div>
+      </div>
+    </nav>
+    <section class="hero" style="background: #171717; margin: 0 0 1em 0">
+      <div class="container" style="background-image: url(/images/herobg.png); background-position: right center; background-repeat: no-repeat;">
+        <div class="hero-body">
+          <h1 class="title" style="color: #FFF">
+            We have the power of time and the love for music
           </h1>
-          <h2 class="subtitle">
-            Gigs you shouldn't have missed!
+          <h2 class="subtitle" style="color: #ccc">
+            Travel back in time to attend gigs that made history
           </h2>
         </div>
       </div>
@@ -27,18 +36,35 @@
 
     <footer class="footer" style="margin: 4em 0 0 0">
       <div class="container">
-        <div class="content has-text-centered">
-          <p>
-            <strong>Ticketless</strong> by <a href="https://serverlesslab.com">ServerlessLab</a>. A sample application for learning Serverless on AWS.</p>
-          <p>The <a href="https://github.com/lucpod/ticketless">source code</a> is licensed
-            <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content
-            is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.
-          </p>
-          <p>
-            <a href="http://bulma.io" target="_blank">
-              <small>Made with <strong>bulma</strong></small>
-            </a>
-          </p>
+        <p><img src="/images/ticketless-logo.svg" style="height:1.8em"/></p>
+        <div class="columns">
+          <div class="column is-3">
+            <div class="content">
+              <strong>Ticketless</strong> by <a href="https://serverlesslab.com">ServerlessLab</a>.<br/><small>A sample application for learning Serverless on AWS.</small></p>
+            </div>
+          </div>
+          <div class="column is-3">
+            <div class="content">
+              <p><small>The <a href="https://github.com/lucpod/ticketless">source code</a> is licensed under
+                <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content
+                is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.</small>
+              </p>
+            </div>
+          </div>
+          <div class="column is-3">
+            <div class="content">
+              <small>
+                Built with <a href="http://bulma.io" target="_blank">bulma</a>, <a href="https://vuejs.org" target="_blank">Vue.js</a> &amp; other Open Source technologies.
+              </small>
+            </div>
+          </div>
+          <div class="column is-3">
+            <div class="content">
+              <small>
+                When time travel will be available, remember to thank <a href="https://twitter.com/Podgeypoos79" target="_blank">@Podgeypoos79</a> and <a href="http://twitter.com/loige" target="_blank">@loige</a> for making you rich with this awesome idea! ❤︎
+              </small>
+            </div>
+          </div>
         </div>
       </div>
     </footer>
