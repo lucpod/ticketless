@@ -1,0 +1,14 @@
+{
+  "name": "dynamodbsetup",
+  "version": "1.0.0",
+  "description": "meta dat for a concert    name of band    location of concert    location capacity    date and time",
+  "main": "create_concert_table.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.133.0"
+  }
+}

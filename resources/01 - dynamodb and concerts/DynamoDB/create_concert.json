@@ -1,0 +1,15 @@
+{
+  "TableName" : "concert",
+  "KeySchema": [
+      { "AttributeName": "band_name", "KeyType": "HASH"},  //Partition key
+      { "AttributeName": "city", "KeyType": "RANGE"} //Range key
+  ],
+  "AttributeDefinitions": [
+      { "AttributeName": "band_name", "AttributeType": "S" },
+      { "AttributeName": "city", "AttributeType": "S" }
+  ],
+  "ProvisionedThroughput": {
+      "ReadCapacityUnits": 10,
+      "WriteCapacityUnits": 10
+  }
+}

@@ -1,0 +1,22 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: An API to return one gig when you give it the gig slug
+Outputs:
+  endpoint:
+    Description: The API Gateway endpoint for getting your gig
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com
+Resources:
+  getOneGig:
+    Properties:
+      CodeUri: s3://lucpod1/85a2ddbf519104086e039f9f50716780
+      Events:
+        Endpoint:
+          Properties:
+            Method: get
+            Path: /gig/{slug}
+          Type: Api
+      Handler: handler.handler
+      Policies: AWSLambdaDynamoDBExecutionRole
+      Runtime: nodejs6.10
+    Type: AWS::Serverless::Function
+Transform: AWS::Serverless-2016-10-31
