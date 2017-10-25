@@ -1,19 +1,19 @@
 if (!window.apiBasePath) {
   console.warn('USING MOCK DATA, configure your apiBasePath')
   // load the mock data if no API is available
-  axios.get('/js/data.json')
+  window.axios.get('/js/data.json')
     .then((response) => {
       window.gigs = response.data
     })
 }
 
 const getGigsMock = (cb) => {
-  if (!window.gigs) return setTimeout(() => {getGigsMock(cb)}, 1000)
-  setTimeout(() => cb(null, gigs), 200)
+  if (!window.gigs) return setTimeout(() => { getGigsMock(cb) }, 1000)
+  setTimeout(() => cb(null, window.gigs), 200)
 }
 
 const getGigMock = (slug, cb) => {
-  if (!window.gigs) return setTimeout(() => {getGigMock(slug, cb)}, 1000)
+  if (!window.gigs) return setTimeout(() => { getGigMock(slug, cb) }, 1000)
   setTimeout(() => {
     const gig = window.gigs.find(gig => gig.slug === slug)
     if (!gig) {
@@ -39,7 +39,7 @@ const submitPaymentMock = (payment, cb) => {
 const getGigs = (cb) => {
   if (!window.apiBasePath) return getGigsMock(cb)
 
-  axios.get(`${window.apiBasePath}/gigs`)
+  window.axios.get(`${window.apiBasePath}/gigs`)
     .then((response) => {
       return cb(null, response.data.gigs)
     })
@@ -51,7 +51,7 @@ const getGigs = (cb) => {
 const getGig = (slug, cb) => {
   if (!window.apiBasePath) return getGigMock(slug, cb)
 
-  axios.get(`${window.apiBasePath}/gigs/${slug}`)
+  window.axios.get(`${window.apiBasePath}/gigs/${slug}`)
     .then((response) => {
       return cb(null, response.data)
     })
@@ -63,7 +63,7 @@ const getGig = (slug, cb) => {
 const submitPayment = (payment, cb) => {
   if (!window.apiBasePath) return submitPaymentMock(payment, cb)
 
-  axios.post(`${window.apiBasePath}/purchase`, payment)
+  window.axios.post(`${window.apiBasePath}/purchase`, payment)
     .then((response) => {
       return cb(null, response.data)
     })
@@ -92,7 +92,7 @@ const GigCard = {
   </div>
 </div>`
 }
-Vue.component('gig-card', GigCard)
+window.Vue.component('gig-card', GigCard)
 
 const GigList = {
   template: `
@@ -383,7 +383,7 @@ const GigPage = {
         { text: '09 - Sep', value: 9 },
         { text: '10 - Oct', value: 10 },
         { text: '11 - Nov', value: 11 },
-        { text: '12 - Dec', value: 12 },
+        { text: '12 - Dec', value: 12 }
       ],
       cardExpiryYearOptions: [2018, 2019, 2020, 2021, 2022, 2023, 2024]
     }
@@ -435,7 +435,8 @@ const GigPage = {
         submitPayment(this.payment, (err, result) => {
           this.paymentInProgress = false
           if (err) {
-            return this.paymentError = err.message ? err.message : JSON.stringify(err)
+            this.paymentError = err.message ? err.message : JSON.stringify(err)
+            return this.paymentError
           }
 
           this.paymentResult = result
@@ -468,15 +469,13 @@ const routes = [
   { path: '/gig/:slug', component: GigPage }
 ]
 
-const router = new VueRouter({
+const router = new window.VueRouter({
   routes,
   mode: 'history'
 })
 
-Vue.use(VeeValidate)
-const app = new Vue({
+window.Vue.use(window.VeeValidate)
+new window.Vue({
   router,
   data: {}
 }).$mount('#app')
-
-// Now the app has started!

@@ -1,0 +1,30 @@
+{
+  "name": "ticketless",
+  "version": "1.0.0",
+  "description": "Yet Another Serverless Workshop :)",
+  "main": "index.js",
+  "scripts": {
+    "test:lint": "eslint .",
+    "test": "npm run test:lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lucpod/ticketless.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lucpod/ticketless/issues"
+  },
+  "homepage": "https://github.com/lucpod/ticketless#readme",
+  "devDependencies": {
+    "eslint": "^4.9.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-node": "^5.2.1",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-standard": "^3.0.1"
+  },
+  "eslintIgnore": ["node_modules"]
+}

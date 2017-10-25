@@ -1,8 +1,8 @@
 {
   "TableName" : "concert",
   "KeySchema": [
-      { "AttributeName": "band_name", "KeyType": "HASH"},  //Partition key
-      { "AttributeName": "city", "KeyType": "RANGE"} //Range key
+      { "AttributeName": "band_name", "KeyType": "HASH"},
+      { "AttributeName": "city", "KeyType": "RANGE"}
   ],
   "AttributeDefinitions": [
       { "AttributeName": "band_name", "AttributeType": "S" },
