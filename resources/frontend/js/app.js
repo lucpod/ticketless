@@ -73,7 +73,7 @@ const submitPayment = (payment, cb) => {
 }
 
 const GigCard = {
-  props: ['image', 'bandName', 'city', 'date', 'slug'],
+  props: ['image', 'bandName', 'city', 'date', 'slug', 'year'],
   template: `
 <div class="card" style="height:100%">
   <div class="card-image">
@@ -85,8 +85,8 @@ const GigCard = {
   </div>
   <div class="card-content">
     <div class="media-content">
-      <p class="title is-4">{{ bandName }}, {{ city }}</p>
-      <p class="subtitle is-6">{{ date }}</p>
+      <p class="title is-4">{{bandName}}, {{city}} ({{year}})</p>
+      <p class="subtitle is-6">{{date}}</p>
       <router-link :to="'/gig/' + slug" class="btn btn-primary">Get tickets</router-link>
     </div>
   </div>
@@ -99,7 +99,7 @@ const GigList = {
   <div>
     <div v-if="gigs.length">
       <div class="content">
-        <h1>{{gigs.length}} Gigs currently available</h1>
+        <h3>There are {{gigs.length}} gigs currently available</h3>
       </div>
     </div>
 
@@ -151,13 +151,21 @@ const GigList = {
 const GigPage = {
   template: `
 <div>
-  <div v-if="gig" style="border: 1px solid #ccc; max-width: 800px">
-    <section class="section">
+  <div v-if="gig">
+    <nav class="breadcrumb" aria-label="breadcrumbs">
+      <ul>
+        <li><router-link to="/">Gigs</router-link></li>
+        <li class="is-active">
+          <router-link :to="'/gig/' + gig.slug">{{gig.bandName}} ({{gig.year}})</router-link>
+        </li>
+      </ul>
+    </nav>
+    <section class="section" style="border: 1px solid #ccc">
       <h1 class="title">
-    {{gig.bandName}}
-  </h1>
+        {{gig.bandName}} ({{gig.year}})
+      </h1>
       <div class="columns">
-        <div class="column is-9">
+        <div class="column is-7">
           <div class="content">
             <p>
               <img :src="'/images/' + gig.image" />
@@ -167,7 +175,7 @@ const GigPage = {
             </p>
           </div>
         </div>
-        <div class="column is-3">
+        <div class="column is-5">
           <div class="panel">
             <p class="panel-heading">
               {{gig.city}}
@@ -176,10 +184,28 @@ const GigPage = {
               {{gig.venue}}
             </div>
             <div class="panel-block">
-              {{gig.date}}
+              {{gig.originalDate}}
             </div>
             <div class="panel-block">
-              <strong>{{gig.price}} EUR</strong>
+              <strong>{{gig.price}} USD</strong>
+            </div>
+          </div>
+          <div class="panel">
+            <p class="panel-heading">
+              Time travel collection point
+            </p>
+            <div class="panel-block">
+              <a :href="mapUrl(gig.collectionPoint)" target="_blank">
+                <img :src="'/images/' + gig.collectionPointMap"/>
+              </a>
+            </div>
+            <div class="panel-block">
+              <a :href="mapUrl(gig.collectionPoint)" target="_blank">
+                {{gig.collectionPoint}}
+              </a>
+            </div>
+            <div class="panel-block">
+              {{gig.date}}, {{gig.collectionTime}}&nbsp;<small>Local time</small>
             </div>
           </div>
           <a href="#buy" class="button is-outlined is-link" v-on:click="scrollToBuy">Buy ticket</a>
@@ -189,9 +215,9 @@ const GigPage = {
     <hr/>
     <section class="section">
       <div class="columns">
-        <div class="column is-9">
+        <div class="column is-7">
           <div class="content">
-            <h3 id="buy">Buy a ticket</h3>
+            <h3 id="buy">Buy a ticket ({{gig.price}} USD)</h3>
             <a href="#" v-on:click="fillWithDemoData">
               <small>(quick fill form)</small>
             </a>
@@ -460,6 +486,9 @@ const GigPage = {
       event.preventDefault()
       const sc = document.scrollingElement || document.documentElement
       sc.scrollTop = document.getElementById('buy').offsetTop
+    },
+    mapUrl (address) {
+      return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`
     }
   }
 }
