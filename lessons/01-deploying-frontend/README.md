@@ -37,9 +37,9 @@ BUCKET_NAME=ticketless-frontend-$(head /dev/urandom | env LC_CTYPE=C tr -cd 'a-z
 aws s3 mb s3://$BUCKET_NAME --region eu-west-1
 ```
 
-**TIP**: `mb` stands for **Make Bucket**
+> **TIP**: `mb` stands for **Make Bucket**
 
-**TIP**: with the first command we create a random name for the bucket using a sequence of shell commands. Of course if you prefer you can leave out the randomisation and pick a unique name yourself like: `ticketless-frontend-for-unicorns`
+> **TIP**: with the first command we create a random name for the bucket using a sequence of shell commands. Of course if you prefer you can leave out the randomisation and pick a unique name yourself like: `ticketless-frontend-for-unicorns`
 
 This will output something like:
 
@@ -74,7 +74,7 @@ All the files we need for the frontend of our app are available under [`resource
 aws s3 cp resources/frontend s3://$BUCKET_NAME --recursive --exclude 'node_modules/*'
 ```
 
-**TIP**: the `--exclude` option will make sure that we won't copy files that are not needed for the frontend to work (in this case the `node_modules` folder which is used only for development dependencies).
+> **TIP**: the `--exclude` option will make sure that we won't copy files that are not needed for the frontend to work (in this case the `node_modules` folder which is used only for development dependencies).
 
 If you want to make sure the files are there, you can run again the command:
 
@@ -100,7 +100,7 @@ If you want to list the files inside the `images` *prefix* (subfolder), you can 
 aws s3 ls s3://$BUCKET_NAME/images/
 ```
 
-**TIP**: another way to copy files into an S3 bucket is to use the [sync](http://docs.aws.amazon.com/cli/latest/reference/s3/sync.html) command.
+> **TIP**: another way to copy files into an S3 bucket is to use the [sync](http://docs.aws.amazon.com/cli/latest/reference/s3/sync.html) command.
 
 
 ## 01.03 - Expose the bucket as a website
