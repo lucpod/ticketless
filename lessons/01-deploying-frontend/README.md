@@ -192,6 +192,8 @@ Try to navigate all the different sections and make sure everything seems to wor
 
 Also try to input a random url to see if the 404 page works as it should.
 
+---
+
 | Previous lesson  | Next lesson      |
 | :--------------- | ---------------: |
 | ◀︎               | [02 — Setting up DynamoDB ▶︎](../02-setting-up-dynamodb) |
