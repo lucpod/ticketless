@@ -16,6 +16,14 @@ If you are already familiar with those concepts you can use the following Cloudf
 **TODO**: add Cloudformation template
 
 
+### Contents
+
+- [Create a bucket](#0101---create-a-bucket)
+- [Copy the frontend files in the bucket](#0102---copy-the-frontend-files-in-the-bucket)
+- [Expose the bucket as a website](#0103---expose-the-bucket-as-a-website)
+- [Bucket policy](#0104---bucket-policy)
+
+
 ## 01.01 - Create a bucket
 
 Amazon Simple Storage Service (S3) is storage for the Internet. It is designed to make web-scale computing easier for developers.
@@ -183,8 +191,10 @@ We can do this with the following command:
 aws s3api put-bucket-policy --bucket $BUCKET_NAME --policy file://policy.json
 ```
 
+This command does not produce any output in case of success.
 
-## 01 - Verify
+
+## Verify
 
 If you followed all the instruction correctly you should now have a functioning frontend with some stub data running in your bucket website.
 
