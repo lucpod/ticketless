@@ -9,11 +9,11 @@
 
 ### Goal
 
-In this lesson we will learn how to host a static website using S3 and Cloudfront.
+In this lesson we will learn how to host a static website using S3.
 
 If you are already familiar with those concepts you can use the following Cloudformation template to apply the changes expected by this lesson and move forward to the next lesson.
 
-**TODO**: add cloudformation template
+**TODO**: add Cloudformation template
 
 
 ## 01.01 - Create a bucket
@@ -139,10 +139,59 @@ Be sure to replace the parameters correctly and visit the URL.
 At this point you should see an error saying: **403 Forbidden**, this is because, the files in our bucket are still private and we need to make them publicly readable in order to allow everybody on the internet to read them.
 
 
-## 01.04 - Provide bucket policy
+## 01.04 - Bucket policy
 
-...
+In AWS land, permissions are managed through [policies](http://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html).
+
+A policy is basically a JSON document that describes actions that are allowed or not for specific users on specific resources.
+
+Policies are part of a bigger service in AWS called [IAM (Identity and Access Management)](https://aws.amazon.com/iam/).
+
+In our case we need to create a policy that authorizes everybody to read all the files in our S3 bucket.
+
+Let's create a file called `policy.json` with the following content:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": [
+        "s3:GetObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::<BUCKET_NAME>/*"
+      ]
+    }
+  ]
+}
+```
+
+**IMPORTANT**: be sure to replace `<BUCKET_NAME>` in the policy content with your actual bucket name.
+
+In this policy we authorize everybody (`"Principal": "*"`) to perform the action `"s3:GetObject"` (read a file) on our website bucket (`Resource: "arn:aws:s3:::<BUCKET_NAME>/*"`).
+
+> **TIP**: Every resource in AWS is uniquely identified by an [ARN (Amazon Resource Name)](http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html). In this case we are using a wildcard ARN, to refer to all the files inside our bucket.
+
+At this point, we have a policy file that we need to attach to our bucket.
+
+We can do this with the following command:
+
+```bash
+aws s3api put-bucket-policy --bucket $BUCKET_NAME --policy file://policy.json
+```
+
 
 ## 01 - Verify
 
-...
+If you followed all the instruction correctly you should now have a functioning frontend with some stub data running in your bucket website.
+
+Try to navigate all the different sections and make sure everything seems to work smoothly.
+
+Also try to input a random url to see if the 404 page works as it should.
+
+| Previous lesson  | Next lesson      |
+| :--------------- | ---------------: |
+| ◀︎               | [02 — Setting up DynamoDB ▶︎](../02-setting-up-dynamodb) |
