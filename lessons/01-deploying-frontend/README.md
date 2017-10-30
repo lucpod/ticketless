@@ -39,12 +39,12 @@ aws s3 mb s3://$BUCKET_NAME --region eu-west-1
 
 > **TIP**: `mb` stands for **Make Bucket**
 
-> **TIP**: with the first command we create a random name for the bucket using a sequence of shell commands. Of course if you prefer you can leave out the randomisation and pick a unique name yourself like: `ticketless-frontend-for-unicorns`
+> **TIP**: with the first command we create a random name for the bucket using a sequence of shell commands (to minimize the likelihood that somebody else has already reserved that name). Of course, if you prefer you can leave out the randomness and try to pick a unique name yourself like: `ticketless-frontend-for-unicorns`
 
 This will output something like:
 
 ```
-make_bucket: ticketless-frontend-2j3suc
+make_bucket: ticketless-frontend-xxxyyy
 ```
 
 To verify that the bucket is there you can now run:
