@@ -17,7 +17,7 @@ const getGigMock = (slug, cb) => {
   setTimeout(() => {
     const gig = window.gigs.find(gig => gig.slug === slug)
     if (!gig) {
-      return cb(new Error('Gig Not found'))
+      return cb(new Error('Not found'))
     }
 
     return cb(null, gig)
@@ -71,6 +71,15 @@ const submitPayment = (payment, cb) => {
       return cb(err)
     })
 }
+
+const NotFound = {
+  template: `
+    <div class="content">
+      <h1>Page not found</h1>
+      <router-link to="/">Go back to the Homa page</router-link>
+    </div>`
+}
+window.Vue.component('not-found', NotFound)
 
 const GigCard = {
   props: ['image', 'bandName', 'city', 'date', 'slug', 'year'],
@@ -374,7 +383,12 @@ const GigPage = {
   </div>
 
   <div v-if="error">
-    {{error}}
+    <template v-if="error === 'Error: Not found'">
+      <not-found/>
+    </template>
+    <template v-else>
+      {{error}}
+    </template>
   </div>
 
 </div>
@@ -495,7 +509,8 @@ const GigPage = {
 
 const routes = [
   { path: '/', component: GigList },
-  { path: '/gig/:slug', component: GigPage }
+  { path: '/gig/:slug', component: GigPage },
+  { path: '*', component: NotFound }
 ]
 
 const router = new window.VueRouter({
