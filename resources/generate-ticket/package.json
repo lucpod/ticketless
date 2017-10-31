@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "jsonwebtoken": "^8.1.0",
+    "pdfkit": "^0.8.3",
     "qrcode": "^0.9.0"
   }
 }

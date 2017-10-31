@@ -23,4 +23,12 @@ module.exports.createContent = (
     }
   )
 
-module.exports.createQRCode = (content, cb) => qr.toString(content, { type: 'svg' }, cb)
+module.exports.createQRCode = (content) => new Promise((resolve, reject) => {
+  qr.toString(content, { type: 'svg' }, (err, code) => {
+    if (err) {
+      return reject(err)
+    }
+
+    return resolve(code)
+  })
+})
