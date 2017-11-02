@@ -85,7 +85,9 @@ aws dynamodb create-table \
   --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
 ```
 
-**TODO**: explain the meaning of every parameter
+In this command the option `attribute-definitions` allows us to specify the name and the type of the attributes we will use as keys with the `key-schema` option. In this case we are defining the `slug` field as *string* (type `S` in DynamoDB) to be a simple *partition key*. We don't need to use a sort key in this case.
+
+The option `provisioned-throughput` is a slightly more complex one and you don't really need to understand it until you start to be concerned about scaling your database throughtput. In brief, it allows to allocate the necessary resources for your throughtput needs and guarantee consistency. If you are interested in knowing more you can consult the [official documentation](provisioned-throughput) about this topic.
 
 If the previous command was executed successfully you should see an output like the following:
 
