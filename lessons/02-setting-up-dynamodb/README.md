@@ -10,7 +10,7 @@
 
 ### Goal
 
-In this lesson we will learn key concepts in dynamoDB, how to use Dynamo DB, how to create a table and how to load it with data from a file.
+In this lesson we will learn key concepts in DynamoDB, how to use Dynamo DB, how to create a table and how to load it with data from a file.
 
 If you are already familiar with those concepts you can use the following Cloudformation template to apply the changes expected by this lesson and move forward to the next lesson.
 
@@ -119,10 +119,17 @@ If the previous command was executed successfully you should see an output like 
 }
 ```
 
+> 💡 **TIP**: You can list all the tables available in your DynamoDB with the following command:
+> ```bash
+> aws dynamodb list-tables --region eu-west-1
+> ```
+
 
 ## 02.03 - Load data into DynamoDB
 
-Data file is prepared and located in [`resources/dynamodb/gig.json`](/resources/dynamodb/gig.json).
+A file containing all the data we need for our `gig` table is already created and available in [`resources/dynamodb/gig.json`](/resources/dynamodb/gig.json).
+
+In order to load this data into our DynamoDB table, we have to issue the following command:
 
 ```bash
 aws dynamodb batch-write-item --request-items file://resources/dynamodb/gig.json
@@ -136,21 +143,18 @@ If the command was executed successfully you should see the following output:
 }
 ```
 
-**TODO**: add tips regarding the format of the `gig.json` file
+> 💡 **TIP**: if you open the file [`gig.json`](/resources/dynamodb/gig.json) you will notice that it does not just contain the raw data but it actually follows a specific structure that resembles a series of *insert* actions (`PutRequest`). If you want to convert a regular JSON array into this peculiar DynamoDB format, you can use the module [json-dynamo-putrequest](https://www.npmjs.com/package/json-dynamo-putrequest).
 
 
 ## 02.04 - Read data from DynamoDB
 
-if you execute this command
+In order to read the data present in a DynamoDB table you can use the `scan` command, which in our case will look like the following:
 
 ```bash
 aws dynamodb scan --table-name gig
 ```
 
-it will return all entries in the dynamoDB table.
-
-
-...
+This command will return all the entries in the DynamoDB table in JSON format, plus some metadata regarding the current status of the table (e.g. the total number or items currently inserted).
 
 
 ## Verify
@@ -164,6 +168,11 @@ aws dynamodb scan --table-name gig | grep ScannedCount
 ```
 
 If you get `"ScannedCount": 12,` as output, well, congratulations, you can now move forward to the next lesson! 🎉
+
+> 💡 **TIP**: if you just want to know the number of items in the table and not list all of them (which is, of course, more convenient for big data sets), you can use the command `describeTable`:
+> ```bash
+> aws dynamodb describe-table --table-name gig
+> ```
 
 
 ---

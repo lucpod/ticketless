@@ -45,9 +45,9 @@ export BUCKET_NAME=ticketless-frontend-$(head /dev/urandom | env LC_CTYPE=C tr -
 aws s3 mb s3://$BUCKET_NAME --region eu-west-1
 ```
 
-> **TIP**: `mb` stands for **Make Bucket**
+> 💡 **TIP**: `mb` stands for **Make Bucket**
 
-> **TIP**: with the first command we create a random name for the bucket using a sequence of shell commands (to minimize the likelihood that somebody else has already reserved that name). Of course, if you prefer you can leave out the randomness and try to pick a unique name yourself like: `ticketless-frontend-for-unicorns`
+> 💡 **TIP**: with the first command we create a random name for the bucket using a sequence of shell commands (to minimize the likelihood that somebody else has already reserved that name). Of course, if you prefer you can leave out the randomness and try to pick a unique name yourself like: `ticketless-frontend-for-unicorns`
 
 This will output something like:
 
@@ -82,7 +82,7 @@ All the files we need for the frontend of our app are available under [`resource
 aws s3 cp resources/frontend s3://$BUCKET_NAME --recursive --exclude 'node_modules/*'
 ```
 
-> **TIP**: the `--exclude` option will make sure that we won't copy files that are not needed for the frontend to work (in this case the `node_modules` folder which is used only for development dependencies).
+> 💡 **TIP**: the `--exclude` option will make sure that we won't copy files that are not needed for the frontend to work (in this case the `node_modules` folder which is used only for development dependencies).
 
 If you want to make sure the files are there, you can run again the command:
 
@@ -108,7 +108,7 @@ If you want to list the files inside the `images` *prefix* (subfolder), you can 
 aws s3 ls s3://$BUCKET_NAME/images/
 ```
 
-> **TIP**: another way to copy files into an S3 bucket is to use the [sync](http://docs.aws.amazon.com/cli/latest/reference/s3/sync.html) command.
+> 💡 **TIP**: another way to copy files into an S3 bucket is to use the [sync](http://docs.aws.amazon.com/cli/latest/reference/s3/sync.html) command.
 
 
 ## 01.03 - Expose the bucket as a website
@@ -124,7 +124,7 @@ Where:
 - `--index-document` represents the document to be used as default index
 - `--error-document` represents the document to be used as 404 page (not found)
 
-> **TIP**: we use `index.html` in both cases because our frontend is a single page application and it's internal routing will manage error messages in case the internal route is not found.
+> 💡 **TIP**: we use `index.html` in both cases because our frontend is a single page application and it's internal routing will manage error messages in case the internal route is not found.
 
 This command will not produce any output.
 
@@ -181,7 +181,7 @@ Let's create a file called `policy.json` with the following content:
 
 In this policy we authorize everybody (`"Principal": "*"`) to perform the action `"s3:GetObject"` (read a file) on our website bucket (`Resource: "arn:aws:s3:::<BUCKET_NAME>/*"`).
 
-> **TIP**: Every resource in AWS is uniquely identified by an [ARN (Amazon Resource Name)](http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html). In this case we are using a wildcard ARN, to refer to all the files inside our bucket.
+> 💡 **TIP**: Every resource in AWS is uniquely identified by an [ARN (Amazon Resource Name)](http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html). In this case we are using a wildcard ARN, to refer to all the files inside our bucket.
 
 At this point, we have a policy file that we need to attach to our bucket.
 
