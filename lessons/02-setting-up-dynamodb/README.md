@@ -2,7 +2,7 @@
 
 | Previous lesson  | Next lesson      |
 | :--------------- | ---------------: |
-| [◀︎ 01 — Deploying the frontend](../01-deploying-frontend) | [03 — ... ▶︎](../03...) |
+| [◀︎ 01 — Deploying the frontend](../01-deploying-frontend) | [03 — REST APIs with Lambda and API Gateway ▶︎](../03-apis-lambda) |
 
 
 ## Lesson 02 — Setting up DynamoDB
@@ -181,4 +181,4 @@ If you get `"ScannedCount": 12,` as output, well, congratulations, you can now m
 
 | Previous lesson  | Next lesson      |
 | :--------------- | ---------------: |
-| [◀︎ 01 — Deploying the frontend](../01-deploying-frontend) | [03 — ... ▶︎](../03...) |
+| [◀︎ 01 — Deploying the frontend](../01-deploying-frontend) | [03 — REST APIs with Lambda and API Gateway ▶︎](../03-apis-lambda) |
