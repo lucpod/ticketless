@@ -89,11 +89,11 @@ info: Lambda successfully executed in 4ms.
 
 Amazon API Gateway is a fully managed service that makes it easy for developers to create, publish, maintain, monitor, and secure APIs at any scale.
 
-This service allows to create endpoints and map them to different integration points like another HTTP endpoint, another AWS service, a Lambda function or a mock endpoint.
+This service allows you to create endpoints and map them to different integration points like another HTTP endpoint, another AWS service, a Lambda function or a mock endpoint.
 
-For the sake of our tutorial we will use Lambda function as API Gateway integration endpoints.
+For the sake of this tutorial, we will use Lambda function as API Gateway integration endpoint.
 
-In this case, AWS offers a convention-based integration mode called [lambda-proxy integration](http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-create-api-as-simple-proxy-for-lambda.html#api-gateway-proxy-integration-lambda-function-nodejs).
+In this case, API Gateway offers a convention-based integration mode called [lambda-proxy integration](http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-create-api-as-simple-proxy-for-lambda.html#api-gateway-proxy-integration-lambda-function-nodejs).
 
 This mode, basically provides a way to map a generic HTTP request to the JSON event that gets passed to the lambda function and expects from the lambda function a response that represents an HTTP response in a pre-defined format.
 
@@ -164,13 +164,138 @@ So based on this abstraction you can get all the needed details from the current
 and provide a generate a response through your Lambda.
 
 
+## Lambda-proxy integration output format
+
+Similarly to what we just saw for the input format, there is also a convention for the [Output Format of a Lambda Function for Proxy Integration](http://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-output-format):
+
+```
+{
+  "isBase64Encoded": true|false,
+  "statusCode": httpStatusCode,
+  "headers": { "headerName": "headerValue", ... },
+  "body": "..."
+}
+```
+
+This means that when we pass a response object to the `callback` function in our Lambda,
+the object should have the following keys:
+
+  - `statusCode`: the HTTP status code (e.g. 200, 404, ...)
+  - `headers`: a dictionary of response headers (e.g. `{"Access-Control-Allow-Origin": "*"}` for CORS)
+  - `body`: the raw body of the response (most of the time this is a JSON encoded string)
+
+
+### A smarter Hello World Lambda ready for API gateway
+
+To familiarise more with these input and output abstractions, let's re-build a simple Hello World lambda
+suitable for API Gateway Lambda proxy integration that takes a `name` as query string parameter and returns a JSON body that contains `{"message": "Hello ${name}"}`.
+
+```javascript
+#index.js
+exports.handler = (event, context, callback) => {
+  // extract the query string parameter from the event (if not available, defaults to 'World')
+  const name = event.queryStringParameters && event.queryStringParameters.name
+    ? event.queryStringParameters.name
+    : 'World'
+
+  // prepare the response body as a JSON string
+  const body = JSON.stringify({
+    message: `Hello ${name}`
+  })
+
+  // create the full response object
+  const response = {
+    statusCode: 200,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body
+  }
+
+  // return the response and ultimate the lambda execution
+  return callback(null, response)
+}
+```
+
+Let's now create 2 test events (`with-name.json` and `without-name.json`), so that we can test this lambda using `lambda-local`:
+
+```bash
+tee with-name.json <<'JSON'
+{
+  "queryStringParameters": {
+    "name": "Alan Turing"
+  }
+}
+JSON
+
+tee without-name.json <<'JSON'
+{}
+JSON
+```
+
+Now let's test the first case:
+
+```bash
+lambda-local -l index.js -h handler -e with-name.json
+```
+
+Which should produce the following output:
+
+```
+info: Logs
+info: ------
+info: START RequestId: e3e7283b-314a-498f-7efa-4ee5ffa14ed1
+info: END
+info: Message
+info: ------
+info: {
+	"statusCode": 200,
+	"headers": {
+		"Content-Type": "application/json"
+	},
+	"body": "{\"message\":\"Hello Alan Turing\"}"
+}
+info: -----
+info: lambda-local successfully complete.
+```
+
+And then the second case:
+
+```bash
+lambda-local -l index.js -h handler -e without-name.json
+```
+
+Which produces:
+
+```
+info: Logs
+info: ------
+info: START RequestId: 814ae71f-912d-a3cb-4933-137a85f3f192
+info: END
+info: Message
+info: ------
+info: {
+	"statusCode": 200,
+	"headers": {
+		"Content-Type": "application/json"
+	},
+	"body": "{\"message\":\"Hello World\"}"
+}
+info: -----
+info: lambda-local successfully complete.
+```
+
+> 💡 **TIP**: With this approach we are not really testing our local code against a real HTTP request,
+but just manually simulating what's happening at the Lambda layer. We will see later on that there are tools
+that will allow us to test also the API Gateway integration locally.
+
+
+## 03.05 - Handling Errors in Lambda-proxy integration
+
 **TODO**
 
-  - describe lambda-proxy integration mode
-  - describe lambda-proxy input format
-  - describe lambda-proxy output format
-  - change hello world lambda to use input parameter as name and respond with proper output format
-  - test the api with lambda local
+ - Describe how to throw errors in Lambda in general
+ - Describe how to deal with HTTP errors.
 
 
 ## 03.04 - Gigs API with mock data
@@ -179,7 +304,7 @@ and provide a generate a response through your Lambda.
 
   - Use mock file to create the two gigs api (list all and list single)
   - add CORS headers
-  - show how to test the apis with lamba-local
+  - show how to test the apis with lambda-local
 
 
 ## 03.05 - Introduction to SAM
