@@ -12,9 +12,7 @@
 
 In this lesson we will learn key concepts in Lambda Functions and API Gateway, two services that can allow you to build and deploy scalable REST APIs in a quick and efficient fashion.
 
-If you are already familiar with those concepts you can use the following Cloudformation template to apply the changes expected by this lesson and move forward to the next lesson.
-
-**TODO**: add Cloudformation template
+If you are already familiar with those concepts you can use skip to the next lesson.
 
 
 ### Contents
@@ -294,10 +292,55 @@ that will allow us to test also the API Gateway integration locally.
 
 ## 03.04 - Handling Errors in Lambda-proxy integration
 
-**TODO**
+If you want to stop the execution of a Lambda with an error you have to invoke the callback by passing the error object as first parameter:
 
- - Describe how to throw errors in Lambda in general
- - Describe how to deal with HTTP errors.
+```javascript
+exports.handler = (event, context, callback) => {
+  return callback(new Error('This execution failed'))
+}
+```
+
+When running this Lambda in AWS, it will immediately terminate with an error. The error will then be logged (in Cloudwatch) and the Lambda execution marked as failed.
+
+In case the Lambda was triggered by an API Gateway request event, in such case, API Gateway doesn't have a response object and doesn't really know how to report the error to the client, so it simply defaults to a `502 Bad Gateway` HTTP error.
+
+The preferred way to report meaningful HTTP errors to client is to build normal Lambda Proxy integration response objects (as saw previously) and use the proper HTTP status code.
+
+For example in case we want to respond with a 404 we can use the following code:
+
+```javascript
+// ...
+return callback(null, {
+  statusCode: 404,
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: '{"error":"Content Not Found"}'
+})
+```
+
+When creating a Lambda for an API it's also a good practice to wrap the content of the Lambda in a `try` `catch` block in order to be able to manage unexpected errors and report them correctly as a 500 error to the invoking client:
+
+```javascript
+exports.handler = (event, context, callback) => {
+  try {
+    // Business logic here...
+  } catch (err) {
+    // make sure the error is logged
+    console.error(err)
+    // return a proper 500 response to the client
+    return callback(null, {
+      statusCode: 500,
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: '{"error":"Internal Server Error"}'
+    })
+  }
+}
+```
+
+In this lesson we learned the basics of AWS Lambda and API Gateway, in the next lesson we will use the concept learned here to start to implement the APIs that will power our application.
 
 
 ---
