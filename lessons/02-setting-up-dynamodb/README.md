@@ -22,7 +22,7 @@ If you are already familiar with those concepts you can use the following Cloudf
 - [DynamoDB basics](#0201---dynamodb-basics)
 - [Create a table](#0202---create-a-table)
 - [Load data into dynamodb](#0203---load-data-into-dynamodb)
-- [Verify by reading data from DynamoDB](#0204---verify-by-reading-data-from-dynamodb)
+- [Read data from DynamoDB](#0204---read-data-from-dynamodb)
 
 
 ## 02.01 - DynamoDB basics

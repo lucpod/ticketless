@@ -2,7 +2,7 @@
 
 | Previous lesson  | Next lesson      |
 | :--------------- | ---------------: |
-| [◀︎ 02 — Setting up DynamoDB](../02-setting-up-dynamodb) | [04 — ... ▶︎](../04...) |
+| [◀︎ 02 — Setting up DynamoDB](../02-setting-up-dynamodb) | [04 — Serverless Application Model ▶︎](../04-serverless-application-model) |
 
 
 ## Lesson 03 — REST APIs with Lambda and API Gateway
@@ -19,8 +19,10 @@ If you are already familiar with those concepts you can use the following Cloudf
 
 ### Contents
 
-- [xxx](#0301---xxx)
-- [yyy](#0301---yyy)
+- [AWS Lambda basics](#0301---aws-lambda-basics)
+- [First Lambda in Node.js](#0302---first-lambda-in-nodejs)
+- [API Gateway basics](#0303---api-gateway-basics)
+- [Handling Errors in Lambda-proxy integration](#0304---handling-errors-in-lambda-proxy-integration)
 
 
 ## 03.01 - AWS Lambda basics
@@ -290,7 +292,7 @@ but just manually simulating what's happening at the Lambda layer. We will see l
 that will allow us to test also the API Gateway integration locally.
 
 
-## 03.05 - Handling Errors in Lambda-proxy integration
+## 03.04 - Handling Errors in Lambda-proxy integration
 
 **TODO**
 
@@ -298,40 +300,8 @@ that will allow us to test also the API Gateway integration locally.
  - Describe how to deal with HTTP errors.
 
 
-## 03.04 - Gigs API with mock data
-
-**TODO**
-
-  - Use mock file to create the two gigs api (list all and list single)
-  - add CORS headers
-  - show how to test the apis with lambda-local
-
-
-## 03.05 - Introduction to SAM
-
-**TODO**
-
-  - brief introduction to SAM
-  - write SAM file for our new apis
-  - deploy through SAM
-  - get the APIs URL
-  - Invoke the APIs through client
-
-
-## 03.06 - Update the frontend app to reference the new APIs
-
-**TODO**
-
-  - describe how to update the reference in S3
-
-## Verify
-
-**TODO**
-
-  - describe how to visit the website and see if everything works as expected
-
 ---
 
 | Previous lesson  | Next lesson      |
 | :--------------- | ---------------: |
-| [◀︎ 02 — Setting up DynamoDB](../02-setting-up-dynamodb) | [04 — ... ▶︎](../04...) |
+| [◀︎ 02 — Setting up DynamoDB](../02-setting-up-dynamodb) | [04 — Serverless Application Model ▶︎](../04-serverless-application-model) |
