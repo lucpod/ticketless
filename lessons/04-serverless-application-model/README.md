@@ -186,7 +186,15 @@ So at this point you can use any REST client of your choice (or even a browser) 
 
 > 💡 **TIP**: When using SAM, SAM-local is a better alternative to lambda-local for local testing. In fact, SAM-local will simulate more accurately what happens in the real AWS environment, taking into account the correct version of the runtime and many of the [limits](http://docs.aws.amazon.com/lambda/latest/dg/limits.html) that you might face in your production environment.
 
-**TODO**: add screenshots to display expected result
+If you did everything correctly this should be the expected output:
+
+`http://127.0.0.1:3000/gigs/`
+
+[![/gigs request expected result](expected-api-output1-thumb.png)](expected-api-output1.png)
+
+`http://127.0.0.1:3000/gigs/`
+
+[![/gigs/band1-location1 request expected result](expected-api-output2-thumb.png)](expected-api-output2.png)
 
 
 ## 04.04 - Packaging and deploying the API
