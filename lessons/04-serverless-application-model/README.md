@@ -98,6 +98,13 @@ Resources:
           Properties:
             Path: /gigs/{slug}
             Method: get
+
+Outputs:
+  endpoint:
+    Description: The API Gateway endpoint for ticketless
+    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com'
+    Export:
+      Name: ticketless:api-endpoint
 ```
 
 Let's analyze the content of this file:
@@ -115,6 +122,8 @@ Let's analyze the content of this file:
   - `Runtime` indicates which runtime we want to use to run the code (in our case Node.js version 6.10)
 
   - `Events` is a dictionary that describes all the events that will trigger the execution of the Lambda function. Every event is identified by an arbitrary name (in our case we choose `Endpoint`). An event object needs to have a `Type` (in the case of API Gateway it's simply `Api`) and a set of `Properties`. Properties will change based on the type of event, for Api events we specified a `Path` and a `Method`.
+
+  - The block `Output` at the end of the file, it's not strictly mandatory but it will help us to retrieve the URL of our API. API Gateway will create a random endpoint URL and by exporting it, we will be able to easily reference to it.
 
 >💡 **TIP**: the SAM command line utility offers an helper that allows you to validate a template file. To try it out, run the following command.
 > ```bash
@@ -197,7 +206,7 @@ If you did everything correctly this should be the expected output:
 
 [![/gigs request expected result](expected-api-output1-thumb.png)](https://raw.githubusercontent.com/lucpod/ticketless/master/lessons/04-serverless-application-model/expected-api-output1.png)
 
-`http://127.0.0.1:3000/gigs/`
+`http://127.0.0.1:3000/gigs/band1-location1`
 
 [![/gigs/band1-location1 request expected result](expected-api-output2-thumb.png)](https://raw.githubusercontent.com/lucpod/ticketless/master/lessons/04-serverless-application-model/expected-api-output2.png)
 
@@ -276,13 +285,48 @@ Successfully created/updated stack - ticketless
 
 ## 04.05 - Discovering the API endpoint
 
-...
+Our applications is now deployed and we have some new Lambdas and an API Gateway configured in our account. The logic question now is "How can I invoke my API?"
 
-**TODO**
+In order to do so we need to discover what's the API endpoint the API Gateway assigned to our newly deployed gateway.
 
-  - get the APIs URL
-  - Invoke the APIs through client
-  - Tip, deployment script
+Remember that at the beginning of this lesson we instrumented our SAM template to export this value in Cloudformation once the deployment is finished. Thanks to this we can easily retrieve the URL of our new API by running this command:
+
+```bash
+aws cloudformation list-exports
+```
+
+This will output something like this:
+
+```
+{
+  "Exports": [
+    {
+      "ExportingStackId": "arn:aws:cloudformation:eu-west-1:123456789012:stack/ticketless/abcdef12-abcd-abcd-abcd-abcdef123456",
+      "Value": "https://abcdefghij.execute-api.eu-west-1.amazonaws.com",
+      "Name": "ticketless:api-endpoint"
+    }
+  ]
+}
+```
+
+The base URL of our gateway is the one under the key `Value`, in this example: https://abcdefghij.execute-api.eu-west-1.amazonaws.com.
+
+If you have multiple records in the output, be sure to look for the one with Name `ticketless:api-endpoint`.
+
+API Gateway supports multiple deployment stages, so that you can deploy to different logical environments if needed (development, test, qa, pre-prod, prod, etc.). By default SAM creates for you a stage called `Prod`.
+
+The final base URL for our newly deployed APIs is given by the concatenation of the gateway URL and the stage name. In this example it will be:
+
+```
+https://abcdefghij.execute-api.eu-west-1.amazonaws.com/Prod/
+```
+
+So you can use this URL right now to test the APIs in your favorite REST client:
+
+ - https://abcdefghij.execute-api.eu-west-1.amazonaws.com/Prod/gigs/
+ - https://abcdefghij.execute-api.eu-west-1.amazonaws.com/Prod/band1-location1
+
+The resulting output should be the same you got while in testing the code locally.
 
 
 ## 04.06 - Update the frontend app to reference the new APIs

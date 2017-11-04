@@ -32,5 +32,7 @@ Resources:
 
 Outputs:
   endpoint:
-    Description: The API Gateway endpoint for getting yout concerts are
+    Description: The API Gateway endpoint for ticketless
     Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com'
+    Export:
+      Name: ticketless:api-endpoint
