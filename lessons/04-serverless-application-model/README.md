@@ -2,7 +2,7 @@
 
 | Previous lesson  | Next lesson      |
 | :--------------- | ---------------: |
-| [◀︎ 03 — REST APIs with Lambda and API Gateway](../03-apis-lambda)| [04 — ... ▶︎](../04...) |
+| [◀︎ 03 — REST APIs with Lambda and API Gateway](../03-apis-lambda)| [05 — Integrating API with DynamoDB ▶︎](../05-api-with-dynamo-db) |
 
 
 ## Lesson 04 — Serverless Application Model
@@ -19,9 +19,12 @@ If you are already familiar with those concepts you can use the following Cloudf
 
 ### Contents
 
-- [xxx](#xxx)
-- [xxx](#xxx)
-- [xxx](#xxx)
+- [Introduction to SAM](#0401---introduction-to-sam)
+- [SAM template for our application](#0402---sam-template-for-our-application)
+- [Gigs API with mock data](#0403---gigs-api-with-mock-data)
+- [Packaging and deploying the API](#0404---packaging-and-deploying-the-api)
+- [Discovering the API endpoint](#0405---discovering-the-api-endpoint)
+- [Updating the frontend app to use the new API](#0406---updating-the-frontend-app-to-use-the-new-api)
 
 
 ## 04.01 - Introduction to SAM
@@ -318,7 +321,7 @@ API Gateway supports multiple deployment stages, so that you can deploy to diffe
 The final base URL for our newly deployed APIs is given by the concatenation of the gateway URL and the stage name. In this example it will be:
 
 ```
-https://abcdefghij.execute-api.eu-west-1.amazonaws.com/Prod/
+https://abcdefghij.execute-api.eu-west-1.amazonaws.com/Prod
 ```
 
 So you can use this URL right now to test the APIs in your favorite REST client:
@@ -329,27 +332,46 @@ So you can use this URL right now to test the APIs in your favorite REST client:
 The resulting output should be the same you got while in testing the code locally.
 
 
-## 04.06 - Update the frontend app to reference the new APIs
+## 04.06 - Updating the frontend app to use the new API
 
-**TODO**
+Finally, we know what is the endpoint of our new API, so we can update the configuration of our frontend app.
 
-  - describe how to update the reference in S3
+In order to dowload the current configuration file from S3 you can run the following command:
+
+```bash
+aws s3 cp s3://$FRONTEND_BUCKET/js/config.js .
+```
+
+This command should have created a `config.js` in your local machine. The content of this file should be the following:
+
+```javascript
+//  add your api gateway base path here e.g. 'http://localhost:3000'
+//  if `false` is used, then mocked data will be used.
+window.apiBasePath = false
+```
+
+Edit the file and change the value `false` with the URL of your gateway (e.g. `'https://abcdefghij.execute-api.eu-west-1.amazonaws.com/Prod'`) and save the file.
+
+Now you have to upload the edited file to S3 again:
+
+```bash
+aws s3 cp config.js s3://$FRONTEND_BUCKET/js/config.js
+```
+
+Now your frontend should use your newly created mock APIs.
 
 
 ## Verify
 
-**TODO**
+If you followed these instructions carefully, you should now be able to visit the URL of the application (from lesson 1) and see that the page is now displaying our mock data.
 
-  - describe how to visit the website and see if everything works as expected
+If you inspect the network traffic you will also see that now the frontend application makes direct call to our new API from API Gateway.
+
+In the next lesson we will evolve our API to use the data we loaded in the DynamoDB table.
 
 
+---
 
-**TODO**
-
-  - Tip that mention serverless, apex or other alternative frameworks
-
-  ---
-
-  | Previous lesson  | Next lesson      |
-  | :--------------- | ---------------: |
-  | [◀︎ 03 — REST APIs with Lambda and API Gateway](../03-apis-lambda) | [04 — ... ▶︎](../04...) |
+| Previous lesson  | Next lesson      |
+| :--------------- | ---------------: |
+| [◀︎ 03 — REST APIs with Lambda and API Gateway](../03-apis-lambda) | [05 — Integrating API with DynamoDB ▶︎](../05-api-with-dynamo-db) |

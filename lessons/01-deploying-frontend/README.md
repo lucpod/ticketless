@@ -41,8 +41,8 @@ An S3 bucket can be named by following the same conventions of DNS names, which 
 To create a bucket in your account you can run the following command:
 
 ```bash
-export BUCKET_NAME=ticketless-frontend-$(head /dev/urandom | env LC_CTYPE=C tr -cd 'a-z0-9' | head -c 6)
-aws s3 mb s3://$BUCKET_NAME --region eu-west-1
+export FRONTEND_BUCKET=ticketless-frontend-$(head /dev/urandom | env LC_CTYPE=C tr -cd 'a-z0-9' | head -c 6)
+aws s3 mb s3://$FRONTEND_BUCKET --region eu-west-1
 ```
 
 > 💡 **TIP**: `mb` stands for **Make Bucket**
@@ -71,7 +71,7 @@ In the previous step we successfully created a bucket for our frontend, but... t
 To see the files in a bucket you can run this command:
 
 ```bash
-aws s3 ls s3://$BUCKET_NAME
+aws s3 ls s3://$FRONTEND_BUCKET
 ```
 
 as expected, this won't produce any output, which means there are currently no files in the bucket.
@@ -79,7 +79,7 @@ as expected, this won't produce any output, which means there are currently no f
 All the files we need for the frontend of our app are available under [`resources/frontend`](../../resources/frontend), so if you have this repository clones somewhere in your machine you can run this command (from the root folder of this repo):
 
 ```bash
-aws s3 cp resources/frontend s3://$BUCKET_NAME --recursive --exclude 'node_modules/*'
+aws s3 cp resources/frontend s3://$FRONTEND_BUCKET --recursive --exclude 'node_modules/*'
 ```
 
 > 💡 **TIP**: the `--exclude` option will make sure that we won't copy files that are not needed for the frontend to work (in this case the `node_modules` folder which is used only for development dependencies).
@@ -87,7 +87,7 @@ aws s3 cp resources/frontend s3://$BUCKET_NAME --recursive --exclude 'node_modul
 If you want to make sure the files are there, you can run again the command:
 
 ```
-aws s3 ls s3://$BUCKET_NAME
+aws s3 ls s3://$FRONTEND_BUCKET
 ```
 
 This time you should see the following output:
@@ -105,7 +105,7 @@ This time you should see the following output:
 If you want to list the files inside the `images` *prefix* (subfolder), you can do so by running:
 
 ```bash
-aws s3 ls s3://$BUCKET_NAME/images/
+aws s3 ls s3://$FRONTEND_BUCKET/images/
 ```
 
 > 💡 **TIP**: another way to copy files into an S3 bucket is to use the [sync](http://docs.aws.amazon.com/cli/latest/reference/s3/sync.html) command.
@@ -116,7 +116,7 @@ aws s3 ls s3://$BUCKET_NAME/images/
 Files in an S3 bucket can be easily exposed as a website. To do so you have to enable the website option in your bucket with the following command:
 
 ```bash
-aws s3 website s3://$BUCKET_NAME/ --index-document index.html --error-document index.html
+aws s3 website s3://$FRONTEND_BUCKET/ --index-document index.html --error-document index.html
 ```
 
 Where:
@@ -131,10 +131,10 @@ This command will not produce any output.
 The website will be accessible in a URL that follows this convention:
 
 ```
-http://<BUCKET_NAME>.s3-website-<REGION>.amazonaws.com
+http://<FRONTEND_BUCKET>.s3-website-<REGION>.amazonaws.com
 ```
 
-Where `BUCKET_NAME` is the name of your bucket and `REGION` the region where it is hosted.
+Where `FRONTEND_BUCKET` is the name of your bucket and `REGION` the region where it is hosted.
 
 For example this might be your URL
 
@@ -170,16 +170,16 @@ Let's create a file called `policy.json` with the following content:
         "s3:GetObject"
       ],
       "Resource": [
-        "arn:aws:s3:::<BUCKET_NAME>/*"
+        "arn:aws:s3:::<FRONTEND_BUCKET>/*"
       ]
     }
   ]
 }
 ```
 
-**IMPORTANT**: be sure to replace `<BUCKET_NAME>` in the policy content with your actual bucket name.
+**IMPORTANT**: be sure to replace `<FRONTEND_BUCKET>` in the policy content with your actual bucket name.
 
-In this policy we authorize everybody (`"Principal": "*"`) to perform the action `"s3:GetObject"` (read a file) on our website bucket (`Resource: "arn:aws:s3:::<BUCKET_NAME>/*"`).
+In this policy we authorize everybody (`"Principal": "*"`) to perform the action `"s3:GetObject"` (read a file) on our website bucket (`Resource: "arn:aws:s3:::<FRONTEND_BUCKET>/*"`).
 
 > 💡 **TIP**: Every resource in AWS is uniquely identified by an [ARN (Amazon Resource Name)](http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html). In this case we are using a wildcard ARN, to refer to all the files inside our bucket.
 
@@ -188,7 +188,7 @@ At this point, we have a policy file that we need to attach to our bucket.
 We can do this with the following command:
 
 ```bash
-aws s3api put-bucket-policy --bucket $BUCKET_NAME --policy file://policy.json
+aws s3api put-bucket-policy --bucket $FRONTEND_BUCKET --policy file://policy.json
 ```
 
 This command does not produce any output in case of success.
