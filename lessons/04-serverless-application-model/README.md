@@ -116,6 +116,11 @@ Let's analyze the content of this file:
 
   - `Events` is a dictionary that describes all the events that will trigger the execution of the Lambda function. Every event is identified by an arbitrary name (in our case we choose `Endpoint`). An event object needs to have a `Type` (in the case of API Gateway it's simply `Api`) and a set of `Properties`. Properties will change based on the type of event, for Api events we specified a `Path` and a `Method`.
 
+>💡 **TIP**: the SAM command line utility offers an helper that allows you to validate a template file. To try it out, run the following command.
+> ```bash
+> sam validate --template template.yaml
+> ```
+
 That's it for now, but if you are curious to know more about the capabilities and the syntax of the SAM specification, be sure to [check out the official documentation](https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md).
 
 
@@ -199,15 +204,88 @@ If you did everything correctly this should be the expected output:
 
 ## 04.04 - Packaging and deploying the API
 
+At this point we have a fully functioning local API and we are ready to deploy it to our AWS account.
+
+In order to deploy a Lambda you need to create a deployment S3 bucket:
+
+```bash
+export DEPLOYMENT_BUCKET=ticketless-lambda-deployment-$(head /dev/urandom | env LC_CTYPE=C tr -cd 'a-z0-9' | head -c 6)
+aws s3 mb s3://$DEPLOYMENT_BUCKET --region eu-west-1
+```
+
+As seen in [lesson 1](../01-deploying-frontend#0101---create-a-bucket), this sequence of commands will create a bucket with a random name. If everything worked as expected you should see the following output:
+
+```
+make_bucket: ticketless-lambda-deployment-abcdefg
+```
+
+Once we have a deployment bucket we can use the `sam` command line utility to package our source code:
+
+```bash
+sam package --template-file template.yaml --s3-bucket $DEPLOYMENT_BUCKET --output-template-file packaged.yaml
+```
+
+This command will perform the following operations:
+
+  - Upload your source code (the folder or zip file referenced in `CodeUri` in the SAM template) to our deployment S3 bucket
+  - Create a new template file where the `CodeUri` property is now replaced with the S3 url that represents the uploaded file. This new template file is the one we can use to deploy our code.
+
+If the previous command was successful, you should see an output similar to the following:
+
+```
+Uploading to abcdef1234567890abcdef1234567890  766 / 766.0  (100.00%)
+Successfully packaged artifacts and wrote output template to file packaged.yaml.
+Execute the following command to deploy the packaged template
+aws cloudformation deploy --template-file packaged.yaml --stack-name <YOUR STACK NAME>
+```
+
+As you might have noticed, the command line is already suggesting you what's the next step needed to deploy the code to AWS. Instead of using `aws cloudformation` we will keep using the `sam` command line utility, but the command is almost the same as the suggested one:
+
+```bash
+export STACK_NAME=ticketless
+sam deploy --region eu-west-1 \
+  --template-file packaged.yaml \
+  --stack-name $STACK_NAME \
+  --capabilities CAPABILITY_IAM
+```
+
+In this command:
+
+  - `template-file` references the packaged template to use for the deploy
+  - `stack-name` is the name of the Cloudformation stack that will be created/updated for our application
+  - `--capabilities CAPABILITY_IAM` is an option that authorizes Cloudformation to create an execution role for the new Lambdas, saving you from the tedious task of having to create the roles and the policies by yourself.
+
+If everything went fine you should have seen the following output:
+
+```
+Waiting for changeset to be created..
+Waiting for stack create/update to complete
+Successfully created/updated stack - ticketless
+```
+
+> 💡 **TIP**: When working on some production application you will probably need to change the code and deploy often. In this case it's convenient to create a deploy script that will package your app and deploy it in one go.
+> In our case the `deploy.sh` might look like this:
+> ```bash
+> #!/usr/bin/env bash
+> export DEPLOYMENT_BUCKET=ticketless-lambda-deployment-abcdefg
+> export STACK_NAME=ticketless
+> sam package --template-file template.yaml --s3-bucket $DEPLOYMENT_BUCKET --output-template-file packaged.yaml
+> sam deploy --region eu-west-1 --template-file packaged.yaml --stack-name $STACK_NAME --capabilities CAPABILITY_IAM
+> ```
+
+
+## 04.05 - Discovering the API endpoint
+
+...
+
 **TODO**
 
-  - package through SAM
-  - deploy through SAM
   - get the APIs URL
   - Invoke the APIs through client
+  - Tip, deployment script
 
 
-## 04.05 - Update the frontend app to reference the new APIs
+## 04.06 - Update the frontend app to reference the new APIs
 
 **TODO**
 
