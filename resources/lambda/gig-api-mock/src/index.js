@@ -31,7 +31,6 @@ exports.listGigs = (event, context, callback) => {
 }
 
 exports.gig = (event, context, callback) => {
-  console.log(event)
   const gigSlug = event.pathParameters.slug
   const gig = mockGigs.find(gig => gig.slug === gigSlug)
 

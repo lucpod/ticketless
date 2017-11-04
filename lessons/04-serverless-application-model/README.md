@@ -121,18 +121,79 @@ That's it for now, but if you are curious to know more about the capabilities an
 
 ## 04.03 - Gigs API with mock data
 
+We can now work on our `src/index.js` file and write the Node.js code for our Lambda functions.
+
+The file will have the following structure:
+
+```javascript
+exports.listGigs = (event, context, callback) => {
+  // ...
+  // 1. get the list of gigs
+  // 2. invoke the callback to return an http lambda proxy response
+  //    with the list of gigs.
+  //    The body of the response is a JSON object that contains
+  //    a property `gigs` which is the array of all the available gigs
+}
+
+exports.gig = (event, context, callback) => {
+  // ...
+  // 1. get the list of gigs
+  // 2. search the gig with the slug coming from `event.pathParameters.slug`
+  // 3. if no gig is found return a 404
+  // 4. if the gig is found return it as body of a lambda proxy response.
+}
+```
+
+In this phase we don't want to use the data in DynamoDB, but a simple mock data that you can generate with the following code:
+
+```javascript
+const mockGigs = [ ...Array(12).keys() ].map(i => ({
+  slug: `band${i}-location${i}`,
+  bandName: `Mock Band ${i}`,
+  city: `Mock City ${i}`,
+  year: '1961',
+  date: '2019-01-01',
+  venue: `Mock Venue ${i}`,
+  collectionPointMap: 'map-placeholder.png',
+  collectionPoint: 'New York, NY 10001, USA',
+  collectionTime: '14:30',
+  originalDate: '1977-02-05',
+  capacity: 3000,
+  description: `Mock description ${i}`,
+  image: 'band-placeholder.png',
+  price: '1010'
+}))
+```
+
+This code fills the array `mockGigs` with a list of 12 gigs, using the structure that is expected in our frontend app and also in our DynamoDB database.
+
+Try to fill the blanks in the sample implementation above and write the code that implements all the steps. If you get stuck, or you prefer to be guided through it, you can see a solution in [`resources/lambda/gig-api-mock`](/resources/lambda/gig-api-mock/src/index.js).
+
+> 💡 **TIP**: Since the frontend will invoke these APIs from a different documentation, the APIs response need to have the header:
+>
+> ```plain
+> Access-Control-Allow-Origin: *
+> ```
+
+When you think you are ready to test your implementation you can run a local version of the code by using [SAM-local](https://github.com/awslabs/aws-sam-local) (in the folder where you placed the `template.yaml` file):
+
+```bash
+sam local start-api
+```
+
+This command will spin up some local docker containers that simulates API Gateway and the Lambda Runtime and expose the APIs over the base path `http://127.0.0.1:3000`.
+So at this point you can use any REST client of your choice (or even a browser) to play with your implementation.
+
+> 💡 **TIP**: When using SAM, SAM-local is a better alternative to lambda-local for local testing. In fact, SAM-local will simulate more accurately what happens in the real AWS environment, taking into account the correct version of the runtime and many of the [limits](http://docs.aws.amazon.com/lambda/latest/dg/limits.html) that you might face in your production environment.
+
+**TODO**: add screenshots to display expected result
+
+
+## 04.04 - Packaging and deploying the API
+
 **TODO**
 
-  - Use mock file to create the two gigs api (list all and list single)
-  - add CORS headers
-  - show how to test the apis with lambda-local
-
-
-## 04.04 - Testing and deploying the API
-
-**TODO**
-
-  - test through SAM-local
+  - package through SAM
   - deploy through SAM
   - get the APIs URL
   - Invoke the APIs through client
