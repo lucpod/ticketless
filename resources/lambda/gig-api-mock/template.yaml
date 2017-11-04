@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: An Mock API to return all concerts or a single concert
+Resources:
+
+  listGigs:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./src
+      Handler: index.listGigs
+      Runtime: nodejs6.10
+      Events:
+        Endpoint:
+          Type: Api
+          Properties:
+            Path: /gigs
+            Method: get
+
+  gig:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./src
+      Handler: index.gig
+      Runtime: nodejs6.10
+      Events:
+        Endpoint:
+          Type: Api
+          Properties:
+            Path: /gigs/{slug}
+            Method: get
+
+Outputs:
+  endpoint:
+    Description: The API Gateway endpoint for getting yout concerts are
+    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com'

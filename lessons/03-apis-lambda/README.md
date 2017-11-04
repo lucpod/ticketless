@@ -302,9 +302,9 @@ exports.handler = (event, context, callback) => {
 
 When running this Lambda in AWS, it will immediately terminate with an error. The error will then be logged (in Cloudwatch) and the Lambda execution marked as failed.
 
-In case the Lambda was triggered by an API Gateway request event, in such case, API Gateway doesn't have a response object and doesn't really know how to report the error to the client, so it simply defaults to a `502 Bad Gateway` HTTP error.
+In case the Lambda was triggered by an API Gateway request event, in such case, API Gateway doesn't have a response object and doesn't really know how to report the error to the client, so it simply defaults to a `502 Bad Gateway` HTTP error and you have no way to provide a detailed error report to the client.
 
-The preferred way to report meaningful HTTP errors to client is to build normal Lambda Proxy integration response objects (as saw previously) and use the proper HTTP status code.
+The preferred way to report meaningful HTTP errors to client is to invoke the callback without error object and build a normal Lambda Proxy integration response objects (as saw previously) with the proper HTTP status code and all the error details in the body.
 
 For example in case we want to respond with a 404 we can use the following code:
 
@@ -319,7 +319,20 @@ return callback(null, {
 })
 ```
 
-When creating a Lambda for an API it's also a good practice to wrap the content of the Lambda in a `try` `catch` block in order to be able to manage unexpected errors and report them correctly as a 500 error to the invoking client:
+Same goes for server side errors (5xx):
+
+```javascript
+// ...
+return callback(null, {
+  statusCode: 599,
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: '{"error":"Connection to external data source timed out"}'
+})
+```
+
+When creating a production-ready™ Lambda for an API it's also a good practice to wrap the content of the Lambda in a `try` `catch` block in order to be able to manage unexpected errors and report them correctly as a 500 error to the invoking client:
 
 ```javascript
 exports.handler = (event, context, callback) => {
@@ -340,7 +353,13 @@ exports.handler = (event, context, callback) => {
 }
 ```
 
-In this lesson we learned the basics of AWS Lambda and API Gateway, in the next lesson we will use the concept learned here to start to implement the APIs that will power our application.
+> 💡 **TIP**: When using this approach, your lambda executions are never marked as failed (in the web AWS Lambda dashboard) so, if you want reports regarding specific HTTP errors happening in your code (generally 5xx errors), you will have to extract those information from the logs.
+
+
+## Verify
+
+This lesson was just a playground to get confident with AWS Lambda and API Gateway. We didn't add any new piece to our project.
+In the next lesson we will use the concept learned here to start to implement the APIs that will power our application.
 
 
 ---
