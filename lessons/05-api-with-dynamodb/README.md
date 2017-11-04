@@ -24,6 +24,24 @@ If you are already familiar with those concepts you can use the following Cloudf
 - [xxx](#xxx)
 
 
+## 05.01 - Creating a role to access our DynamoDB table
+
+...
+
+
+## 05.02 - Using the AWS SDK
+
+...
+
+
+## 05.03 - Update our lambdas
+
+...
+
+
+## Validate
+
+
 ---
 
 | Previous lesson  | Next lesson      |

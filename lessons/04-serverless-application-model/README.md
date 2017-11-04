@@ -2,7 +2,7 @@
 
 | Previous lesson  | Next lesson      |
 | :--------------- | ---------------: |
-| [◀︎ 03 — REST APIs with Lambda and API Gateway](../03-apis-lambda)| [05 — Integrating API with DynamoDB ▶︎](../05-api-with-dynamo-db) |
+| [◀︎ 03 — REST APIs with Lambda and API Gateway](../03-apis-lambda)| [05 — Integrating API with DynamoDB ▶︎](../05-api-with-dynamodb) |
 
 
 ## Lesson 04 — Serverless Application Model
@@ -374,4 +374,4 @@ In the next lesson we will evolve our API to use the data we loaded in the Dynam
 
 | Previous lesson  | Next lesson      |
 | :--------------- | ---------------: |
-| [◀︎ 03 — REST APIs with Lambda and API Gateway](../03-apis-lambda) | [05 — Integrating API with DynamoDB ▶︎](../05-api-with-dynamo-db) |
+| [◀︎ 03 — REST APIs with Lambda and API Gateway](../03-apis-lambda) | [05 — Integrating API with DynamoDB ▶︎](../05-api-with-dynamodb) |

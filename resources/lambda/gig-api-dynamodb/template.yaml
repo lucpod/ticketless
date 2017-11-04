@@ -1,0 +1,67 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: A Mock API to return all gigs or a single gig
+
+Resources:
+
+  GigsApiRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      Path: "/"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "AllowLambdaServiceToAssumeRole"
+            Effect: "Allow"
+            Action:
+              - "sts:AssumeRole"
+            Principal:
+              Service:
+                - "lambda.amazonaws.com"
+      Policies:
+        - PolicyName: "GigsApiDynamoDBPolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "dynamodb:Scan"
+                Resource: !Sub 'arn:aws:dynamodb:eu-west-1:${AWS::AccountId}:table/gig'
+
+  listGigs:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./src
+      Handler: index.listGigs
+      Runtime: nodejs6.10
+      Role: !GetAtt GigsApiRole.Arn
+
+      Events:
+        Endpoint:
+          Type: Api
+          Properties:
+            Path: /gigs
+            Method: get
+
+  gig:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./src
+      Handler: index.gig
+      Runtime: nodejs6.10
+      Role: !GetAtt GigsApiRole.Arn
+      Events:
+        Endpoint:
+          Type: Api
+          Properties:
+            Path: /gigs/{slug}
+            Method: get
+
+Outputs:
+  endpoint:
+    Description: The API Gateway endpoint for ticketless
+    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com'
+    Export:
+      Name: ticketless:api-endpoint
