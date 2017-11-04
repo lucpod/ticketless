@@ -28,6 +28,7 @@ Resources:
               - Effect: "Allow"
                 Action:
                   - "dynamodb:Scan"
+                  - "dynamodb:GetItem"
                 Resource: !Sub 'arn:aws:dynamodb:eu-west-1:${AWS::AccountId}:table/gig'
 
   listGigs:
