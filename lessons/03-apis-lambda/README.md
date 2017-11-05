@@ -187,7 +187,7 @@ the object should have the following keys:
 
 ### A smarter Hello World Lambda ready for API gateway
 
-To familiarise more with these input and output abstractions, let's re-build a simple Hello World lambda
+To familiarize more with these input and output abstractions, let's re-build a simple Hello World lambda
 suitable for API Gateway Lambda proxy integration that takes a `name` as query string parameter and returns a JSON body that contains `{"message": "Hello ${name}"}`.
 
 ```javascript

@@ -132,7 +132,7 @@ The code is not changed, so the API still returns mock data, but now the underly
 In the next section we will see how to take advantage of this new capability.
 
 
-## 05.02 - Using the AWS SDK
+## 05.02 - Accessing DynamoDB with the AWS SDK
 
 In every Lambda function we can use the AWS SDK to interact with other AWS resources by simply requiring the library:
 
@@ -213,11 +213,46 @@ docClient.get(queryParams, (err, data) => {
 
 ## 05.03 - Update our lambdas
 
-...
+Now we should have acquired the needed knowledge to update our Lambda functions and make use of DynamoDB to fetch the data.
+
+In order to update the `index.js` file you can use the following template:
+
+```javascript
+// 1. import AWS SDK
+// 2. instantiate a document client
+
+exports.listGigs = (event, context, callback) => {
+  // 3. use the document client to perform a scan operation
+  //    on the gig table
+  //    
+  //    - if the scan fail, log the error and return a 500 response
+  //    - if the scan succeed return all the gigs in object with the key `gigs`
+  //      and a 200 response
+}
+
+exports.gig = (event, context, callback) => {
+  // 4. use the document client to get a single item from the gig
+  //    table by slug
+  //    
+  //    - if the get fails, log the error and return a 500 response
+  //    - if the scan succeed but without results return a 404 response
+  //    - otherwise return the gig object with a 200 response
+}
+```
+
+If you are not sure about your code or need some more guidance you can have a look at the complete example in [`resources/lambda/gig-api-dynamodb`](/resources/lambda/gig-api-dynamodb/src/index.js).
+
+Once you are confident enough about your update API you can run a new deploy:
+
+```bash
+sam package --template-file template.yaml --s3-bucket $DEPLOYMENT_BUCKET --output-template-file packaged.yaml
+sam deploy --region eu-west-1 --template-file packaged.yaml --stack-name $STACK_NAME --capabilities CAPABILITY_IAM
+```
 
 
 ## Validate
 
+If you followed all the steps correctly, you should now be able to refresh your frontend and see some real data!
 
 ---
 
