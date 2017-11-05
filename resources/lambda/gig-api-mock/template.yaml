@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: 'AWS::Serverless-2016-10-31'
-Description: A Mock API to return all gigs or a single gig
+Description: Api and services for the ticketless application
 
 Resources:
 
