@@ -95,7 +95,7 @@ exports.purchaseTicket = (event, context, callback) => {
   //   - disclaimerAccepted: required (true)
   //
   //   Must return a validation error (400 Bad request) with the following object:
-  //   { error: "Invalid request", errors: [{field: "fieldName", message: "error message"}]}
+  //   {error: "Invalid request", errors: [{field: "fieldName", message: "error message"}]}
   //
   //   or, in case of success a 202 (Accepted) with body { success: true }
 
