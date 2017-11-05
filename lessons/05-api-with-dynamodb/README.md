@@ -2,7 +2,7 @@
 
 | Previous lesson  | Next lesson      |
 | :--------------- | ---------------: |
-| [◀︎ 04 — Serverless Application Model](../04-serverless-application-model)| [06 — ... ▶︎](../) |
+| [◀︎ 04 — Serverless Application Model](../04-serverless-application-model)| [06 — Purchase ticket API ▶︎](../06-purchase-ticket-api) |
 
 
 ## Lesson 05 — Integrating API with DynamoDB
@@ -21,8 +21,8 @@ If you are already familiar with those concepts you can use the following Cloudf
 
 - [Understanding Policies and Roles in AWS](#0501---understanding-policies-and-roles-in-aws)
 - [Creating a role to access our DynamoDB table](#0502---creating-a-role-to-access-our-dynamodb-table)
-- [xxx](#xxx)
-- [xxx](#xxx)
+- [Accessing DynamoDB with the AWS SDK](#0503---accessing-dynamodb-with-the-aws-sdk)
+- [Using DynamoDB in oru APIs](#0504---using-dynamodb-in-oru-apis)
 
 
 ## 05.01 - Understanding Policies and Roles in AWS
@@ -259,4 +259,4 @@ If you followed all the steps correctly, you should now be able to refresh your 
 
 | Previous lesson  | Next lesson      |
 | :--------------- | ---------------: |
-| [◀︎ 04 — Serverless Application Model](../04-serverless-application-model)| [06 — ... ▶︎](../) |
+| [◀︎ 04 — Serverless Application Model](../04-serverless-application-model)|  [06 — Purchase ticket API ▶︎](../06-purchase-ticket-api) |
