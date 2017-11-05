@@ -288,7 +288,7 @@ exports.sendMailWorker = (event, context, callback) => {
       return callback(err)
     }
 
-    if (data.Messages.length === 0) {
+    if (!data.Messages) {
       console.log('no messages to process')
       return callback(null, 'no messages to process')
     }
