@@ -1,0 +1,5 @@
+export SMTP_HOST=""
+export SMTP_PORT=""
+export SMTP_SENDER_ADDRESS=""
+export SMTP_USERNAME=""
+export SMTP_PASSWORD=""

@@ -1,0 +1,198 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: Api and services for the ticketless application
+
+Parameters:
+  SmtpHost:
+    Description: The SMTP Host to send emails
+    Type: String
+  SmtpPort:
+    Description: The port for the SMTP server (generally 25 or 465)
+    Type: Number
+    Default: 465
+  SmtpSenderAddress:
+    Description: "The email address to send emails from"
+    Type: String
+  SmtpUsername:
+    Description: "The username to authenticate to the SMTP server"
+    Type: String
+  SmtpPassword:
+    Description: "The password to authenticate to the SMTP server"
+    Type: String
+
+Resources:
+
+  GigsApiRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "AllowLambdaServiceToAssumeRole"
+            Effect: "Allow"
+            Action:
+              - "sts:AssumeRole"
+            Principal:
+              Service:
+                - "lambda.amazonaws.com"
+      Policies:
+        - PolicyName: "GigsApiDynamoDBPolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "dynamodb:Scan"
+                  - "dynamodb:GetItem"
+                Resource: !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/gig'
+              - Effect: "Allow"
+                Action:
+                  - "sns:Publish"
+                Resource: !Ref TicketPurchasedTopic
+
+  SendMailWorkerRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "AllowLambdaServiceToAssumeRole"
+            Effect: "Allow"
+            Action:
+              - "sts:AssumeRole"
+            Principal:
+              Service:
+                - "lambda.amazonaws.com"
+      Policies:
+        - PolicyName: "GigsApiDynamoDBPolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "sqs:ReceiveMessage"
+                  - "sqs:DeleteMessage"
+                Resource: !GetAtt TicketPurchasedQueue.Arn
+
+  TicketPurchasedQueue:
+    Type: "AWS::SQS::Queue"
+    Properties:
+      QueueName: "ticketless-ticketPurchased"
+
+  TicketPurchasedTopic:
+    Type: "AWS::SNS::Topic"
+    Properties:
+      TopicName: "ticketless-ticketPurchased"
+      Subscription:
+        - Endpoint: !GetAtt TicketPurchasedQueue.Arn
+          Protocol: "sqs"
+
+  QueuePolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      Queues:
+        - Ref: TicketPurchasedQueue
+      PolicyDocument:
+        Version: "2012-10-17"
+        Id: "ReceiveFromSnsPolicy"
+        Statement:
+          - Sid: "ReceiveFromSns"
+            Effect: "Allow"
+            Principal: "*"
+            Action:
+              - sqs:SendMessage
+            Resource: "*"
+            Condition:
+              ArnEquals:
+                "aws:SourceArn": !Ref TicketPurchasedTopic
+
+  listGigs:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./src
+      Handler: index.listGigs
+      Runtime: nodejs6.10
+      Role: !GetAtt GigsApiRole.Arn
+
+      Events:
+        Endpoint:
+          Type: Api
+          Properties:
+            Path: /gigs
+            Method: get
+
+  gig:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./src
+      Handler: index.gig
+      Runtime: nodejs6.10
+      Role: !GetAtt GigsApiRole.Arn
+      Events:
+        Endpoint:
+          Type: Api
+          Properties:
+            Path: /gigs/{slug}
+            Method: get
+
+  purchaseTicket:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./src
+      Handler: index.purchaseTicket
+      Runtime: nodejs6.10
+      Role: !GetAtt GigsApiRole.Arn
+      Environment:
+        Variables:
+          SNS_TOPIC_ARN: !Ref TicketPurchasedTopic
+      Events:
+        Endpoint:
+          Type: Api
+          Properties:
+            Path: /purchase
+            Method: post
+
+  CORS:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./src
+      Handler: index.cors
+      Runtime: nodejs6.10
+      Events:
+        Endpoint:
+          Type: Api
+          Properties:
+            Path: /{path+}
+            Method: options
+
+  SendMailWorker:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./src
+      Handler: index.sendMailWorker
+      Runtime: nodejs6.10
+      Role: !GetAtt SendMailWorkerRole.Arn
+      Environment:
+        Variables:
+          SQS_QUEUE_URL: !Ref TicketPurchasedQueue
+          SMTP_HOST: !Ref SmtpHost
+          SMTP_PORT: !Ref SmtpPort
+          SMTP_SENDER_ADDRESS: !Ref SmtpSenderAddress
+          SMTP_USERNAME: !Ref SmtpUsername
+          SMTP_PASSWORD: !Ref SmtpPassword
+      Events:
+        Timer:
+          Type: Schedule
+          Properties:
+            Schedule: rate(1 minute)
+
+Outputs:
+  endpoint:
+    Description: The API Gateway endpoint for ticketless
+    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com'
+    Export:
+      Name: ticketless:api-endpoint

@@ -64,3 +64,6 @@ typings/
 
 # cloudformation/SAM
 packaged.yaml
+
+# env variables
+.env

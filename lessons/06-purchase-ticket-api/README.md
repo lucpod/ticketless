@@ -2,7 +2,7 @@
 
 | Previous lesson  | Next lesson      |
 | :--------------- | ---------------: |
-| [◀︎ 05 — Integrating API with DynamoDB](../05-api-with-dynamodb)| [07 — ... ▶︎](../) |
+| [◀︎ 05 — Integrating API with DynamoDB](../05-api-with-dynamodb)| [07 — SNS and SQS ▶︎](../07-sns-and-sqs) |
 
 
 ## Lesson 06 — Purchase ticket API
@@ -107,7 +107,7 @@ The API we want to implement needs to process the input, verify that it's a vali
 
   - If the request body is not a valid JSON it should a `400 Bad Request` with body `{"error": "Invalid content, expected valid JSON"}`
 
-  - If one or more fields are missing or are not valid the APi should respond with a `400 Bad Request` with a JSON body containing a list of all the errors as per the following example:
+  - If one or more fields are missing or are not valid the API should respond with a `400 Bad Request` with a JSON body containing a list of all the errors as per the following example:
 
   ```json
   {
@@ -295,4 +295,4 @@ If you see a green success message saying that the payment was processed correct
 
 | Previous lesson  | Next lesson      |
 | :--------------- | ---------------: |
-| [◀︎ 05 — Integrating API with DynamoDB](../05-api-with-dynamodb)| [07 — ... ▶︎](../) |
+| [◀︎ 05 — Integrating API with DynamoDB](../05-api-with-dynamodb)|  [07 — SNS and SQS ▶︎](../07-sns-and-sqs) |
