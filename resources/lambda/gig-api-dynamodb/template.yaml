@@ -7,7 +7,6 @@ Resources:
   GigsApiRole:
     Type: "AWS::IAM::Role"
     Properties:
-      Path: "/"
       ManagedPolicyArns:
         - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
       AssumeRolePolicyDocument:
@@ -29,7 +28,7 @@ Resources:
                 Action:
                   - "dynamodb:Scan"
                   - "dynamodb:GetItem"
-                Resource: !Sub 'arn:aws:dynamodb:eu-west-1:${AWS::AccountId}:table/gig'
+                Resource: !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/gig'
 
   listGigs:
     Type: AWS::Serverless::Function
