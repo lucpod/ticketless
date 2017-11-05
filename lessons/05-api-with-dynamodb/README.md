@@ -19,7 +19,8 @@ If you are already familiar with those concepts you can use the following Cloudf
 
 ### Contents
 
-- [xxx](#xxx)
+- [Understanding Policies and Roles in AWS](#0501---understanding-policies-and-roles-in-aws)
+- [Creating a role to access our DynamoDB table](#0502---creating-a-role-to-access-our-dynamodb-table)
 - [xxx](#xxx)
 - [xxx](#xxx)
 
@@ -132,7 +133,7 @@ The code is not changed, so the API still returns mock data, but now the underly
 In the next section we will see how to take advantage of this new capability.
 
 
-## 05.02 - Accessing DynamoDB with the AWS SDK
+## 05.03 - Accessing DynamoDB with the AWS SDK
 
 In every Lambda function we can use the AWS SDK to interact with other AWS resources by simply requiring the library:
 
@@ -211,7 +212,7 @@ docClient.get(queryParams, (err, data) => {
 ```
 
 
-## 05.03 - Update our lambdas
+## 05.04 - Using DynamoDB in oru APIs
 
 Now we should have acquired the needed knowledge to update our Lambda functions and make use of DynamoDB to fetch the data.
 
