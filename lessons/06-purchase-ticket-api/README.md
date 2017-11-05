@@ -67,7 +67,7 @@ A big part of our application is to be able to sell tickets for the gigs.
 
 In every gig page, the frontend already exposes a form to do the purchase at the bottom of the page.
 
-![Purchase ticket form](payment-form)
+![Purchase ticket form](payment-form.png)
 
 When you fill the form and hit the *Purchase* button, the frontend will submit the data to an API located in `/purchase` with a `POST` request.
 
