@@ -19,9 +19,10 @@ If you are already familiar with those concepts you can use the following Cloudf
 
 ### Contents
 
-- [xxx](#xxx)
-- [xxx](#xxx)
-- [xxx](#xxx)
+- [Using external dependencies from NPM](#0601---using-external-dependencies-from-npm)
+- [API for tickets purchase](#0602---api-for-tickets-purchase)
+- [Exposing the new API in the template](#0603---exposing-the-new-api-in-the-template)
+- [Enabling CORS for non-GET requests](#0604---enabling-cors-for-non-get-requests)
 
 
 ## 06.01 - Using external dependencies from NPM

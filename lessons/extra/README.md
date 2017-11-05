@@ -18,6 +18,8 @@ I hope you had fun along the way and that's just the beginning of your Serverles
   - Manage tickets availability and make a customer can't purchase tickets for sold-out events (this might require changes also in the frontend)
   - If you want to get very fancy you can also create a system that locks a ticket for a given amount of time while the user is filling the form for the purchase.
   - Integrate a real payment system like [Stripe](https://stripe.com/ie) or [Braintree](https://www.braintreepayments.com) in the purchase API and process the payments against them (of course in test mode 😇)
+  - The current email sent to the user after a purchase is quite ugly, can you make it better, maybe using some HTML template rather than plain text?
+  - Also, it could be nice to attach to the email a nice pdf version of the ticket, maybe with some fancy barcode...
   - The worker scheduling is currently based on a schedule rule that allows us to process only one message per minute. This is not very scalable. Can you think of any solution that will allows us to make it more scalable?
   - Also there are many other architectures and AWS services that can allow you to have a queue of messages to process. You might want to have a look at [DynamoDB streams](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Streams.Lambda.html) and [Kinesis](https://aws.amazon.com/kinesis/).
 
