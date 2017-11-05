@@ -134,7 +134,81 @@ In the next section we will see how to take advantage of this new capability.
 
 ## 05.02 - Using the AWS SDK
 
-...
+In every Lambda function we can use the AWS SDK to interact with other AWS resources by simply requiring the library:
+
+```javascript
+const AWS = require('aws-sdk')
+```
+
+This library is pre-installed in every Lambda, so we don't need to create a `package.json` or run `npm` in order to use it. We will see in the following lessons how to use arbitrary dependencies from NPM.
+
+Once we imported the AWS SDK we can get a DynamoDB instance with:
+
+```javascript
+const docClient = new AWS.DynamoDB.DocumentClient()
+```
+
+DynamoDB has a variety of features and you can access them directly from the [`AWS.DynamoDB`](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB.html#constructor-property) object or from [`AWS.DynamoDB.DocumentClient`](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html). We will focus only on the [`scan`](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html#scan-property) and [`get`](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html#get-property) operations of the `DocumentClient`, so if you want to know more, please reference to the [official DynamoDB API reference](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB.html).
+
+
+### Scan operation
+
+We can invoke `docClient.scan` to get one or more items and all their attributes.
+
+Here is an example that allows us to get all the items in a table:
+
+```javascript
+const queryParams = {
+  TableName : 'Table'
+}
+
+const docClient = new AWS.DynamoDB.DocumentClient()
+
+docClient.scan(queryParams, (err, data) => {
+  if (err) {
+    console.error(err)
+    throw err
+  }
+
+  // prints all the items
+  console.log(data.Items)
+})
+```
+
+> 💡 **TIP**: scan can also use filtering to fetch items matching specific conditions. Check out the [documentation](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html#scan-property) if you are curious to learn how to do it.
+
+
+### Get operation
+
+We can invoke `docClient.get` to get a specific item by key and fetch all the item attributes.
+
+Here is an example that allows us to get an item by key from a given table:
+
+```javascript
+const queryParams = {
+  Key: {
+    thePrimaryKey: 'primaryKeyValue'
+  },
+  TableName: 'someTable'
+}
+
+const docClient = new AWS.DynamoDB.DocumentClient()
+
+docClient.get(queryParams, (err, data) => {
+  if (err) {
+    console.error(err)
+    throw err
+  }
+
+  if (!data.Item) {
+    // item not found
+    // ...
+  } else {
+    // prints the item
+    console.log(data.Item)
+  }
+})
+```
 
 
 ## 05.03 - Update our lambdas
