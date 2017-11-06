@@ -79,7 +79,7 @@ SQS will look like the following:
   ]
 }
 ```
-([See this JSON in the browser](https://gist.githubusercontent.com/lmammino/ae072002e64b1e1e8372aac9b0158ea4/raw/85ffc54239e1134e4395955269311160cc01660d/example.json))
+([View this JSON in the browser](https://gist.githubusercontent.com/lmammino/ae072002e64b1e1e8372aac9b0158ea4/raw/85ffc54239e1134e4395955269311160cc01660d/example.json))
 
 So in order to get the real content of the message you will need to JSON-parse-it™
 twice as follows:
@@ -114,16 +114,66 @@ sqs.deleteMessage(deleteMessageParams, (err, data) => {
 
 ## 08.02 - Sending emails from Node.js / Lambda
 
-Mention SES, complex setup, needed a domain.
+As part of this lesson we will need to send an email from a Lambda function.
 
-For the sake of this exercise we are going to use [mailtrap](https://mailtrap.io) and the node [nodemailer](http://npm.im/nodemailer) module
+AWS offers a complete service for sending transactional emails called
+[Simple Email Service (SES)](https://aws.amazon.com/ses/).
 
-Show how to get parameters in mailtrap:
+Although this is the right service to use in production for sending emails in the
+AWS cloud, it takes sometime to be configured and you will need a custom domain registered.
 
-  - Host:	smtp.mailtrap.io
-  - Port:	25 or 465 or 2525 (use 465)
-  - Username:	xxx
-  - Password:	yyy
+Also, for the sake of this tutorial, we don't really need to send real email to real people,
+so a simple SMTP test server is more than enough for our purposes.
+
+A very good (and mostly free) cloud based SMTP test server is [Mailtrap](https://mailtrap.io).
+
+You can quickly create a free account on Mailtrap using you GitHub profile and, then,
+from your online panel be sure to copy somewhere the following parameters as we will need them
+later:
+
+  - `Host`:	smtp.mailtrap.io
+  - `Port`:	25 or 465 or 2525 (use 465)
+  - `Username`:	xxx
+  - `Password`:	yyy
+
+In order to send emails from Node.js we can use the [nodemailer](http://npm.im/nodemailer) module
+in combination with the [nodemailer-smtp-transport](http://npm.im/nodemailer-smtp-transport) companion module.
+
+Here's a quick 'n dirty example on how to send a quick email with `nodemailer` using
+SMTP:
+
+```javascript
+const nodemailer = require('nodemailer')
+const smtpTransport = require('nodemailer-smtp-transport')
+
+const transporter = nodemailer.createTransport(smtpTransport({
+  host: 'somehost.com',
+  port: 465,
+  auth: {
+    user: 'arthur',
+    pass: 'conan doyle'
+  }
+}))
+
+const mailOptions = {
+  from: 'some@one.com',
+  to: 'somebody@else.com',
+  subject: 'Just catching up...',
+  text: 'Hey how are you today?'
+}
+
+transporter.sendMail(mailOptions, (err, info) => {
+  if (err) {
+    console.error(err)
+  } else {
+    console.log('Mail sent successfully!')
+  }
+})
+```
+
+
+## 08.03 - Managing sensitive variables in Lambda
+
 
 We need to have a way to provide the above ones plus some extra parameters
 
@@ -196,7 +246,7 @@ sam deploy \
 TIP: You can create a more refined deploy script that loads the env before running the commands
 
 
-## 08.03 - Create worker lambda
+## 08.04 - Create worker lambda
 
 We need to define the role (so that the lambda can read from the queue and delete messages)
 
@@ -258,7 +308,7 @@ SendMailWorker:
 explain the schedule event
 
 
-## 08.04 - Creating the lambda
+## 08.05 - Creating the lambda
 
 First of all install new dependencies.
 
@@ -381,7 +431,11 @@ Deploy
 
 Test
 
-Closing off
+## Verify
+
+...
+
+## Closing off
 
 ...
 
