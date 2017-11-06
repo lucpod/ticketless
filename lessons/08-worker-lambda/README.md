@@ -19,9 +19,11 @@ If you are already familiar with those concepts you can use the following Cloudf
 
 ### Contents
 
-- [xxx](#xxx)
-- [xxx](#xxx)
-- [xxx](#xxx)
+  - [Consuming messages from an SQS queue](#0801---consuming-messages-from-an-sqs-queue)
+  - [Sending emails from Node.js / Lambda](#0802---sending-emails-from-nodejs--lambda)
+  - [Managing configuration in Lambda](#0803---managing-configuration-in-lambda)
+  - [Defining the worker Lambda](#0804---defining-the-worker-lambda)
+  - [Writing the worker code](#0805---writing-the-worker-code)
 
 
 ## 08.01 - Consuming messages from an SQS queue
@@ -353,7 +355,7 @@ The syntax is very simple in this case, for more elaborate schedule rules you ca
 [cron expressions](http://docs.aws.amazon.com/lambda/latest/dg/tutorial-scheduled-events-schedule-expressions.html).
 
 
-## 08.05 - Writing the Lambda code
+## 08.05 - Writing the worker code
 
 So, here it goes with the fun part: let's write some Lambda code to implement our worker.
 
