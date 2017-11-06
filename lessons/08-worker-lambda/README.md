@@ -257,14 +257,23 @@ in AWS by using dedicated services like [Systems Manager Parameter Store](http:/
 and fine tune the level of access to different users or systems.
 
 
-## 08.04 - Create worker lambda
+## 08.04 - Defining the worker Lambda
 
-We need to define the role (so that the lambda can read from the queue and delete messages)
+We are now almost ready to write the code for our worker lambda.
 
-In template.yaml
+The first thing we need is a dedicated role that allows the lambda to access messages
+from our queue and delete them.
+
+Let's add the role definition in the `template.yaml` under the `Resources` section:
 
 ```yaml
-SendMailWorkerRole:
+# ...
+
+Resources:
+
+  # ...
+
+  SendMailWorkerRole:
     Type: "AWS::IAM::Role"
     Properties:
       ManagedPolicyArns:
@@ -289,12 +298,20 @@ SendMailWorkerRole:
                   - "sqs:ReceiveMessage"
                   - "sqs:DeleteMessage"
                 Resource: !GetAtt TicketPurchasedQueue.Arn
+
+  # ...
 ```
 
-Add Lambda definition:
+And finally, we have to define our Lambda function in the `template.yaml` as well:
 
 ```yaml
-SendMailWorker:
+# ...
+
+Resources:
+
+  # ...
+
+  SendMailWorker:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ./src
@@ -314,12 +331,29 @@ SendMailWorker:
           Type: Schedule
           Properties:
             Schedule: rate(1 minute)
+  # ...
 ```
 
-explain the schedule event
+The new things to notice here is how we are defining environment variables by
+referencing the SAM parameters we defined in the previous section.
+
+With this approach all the parameters values will be available in the Lambda code
+as environment variables.
+
+For example you can access the SMTP password with:
+
+```javascript
+process.env.SMTP_PASSWORD
+```
+
+Another new thing here is the `Schedule` event. The schedule event allows us to
+execute a Lambda at periodic intervals (in this case every minute).
+
+The syntax is very simple in this case, for more elaborate schedule you can even use
+[cron expressions](http://docs.aws.amazon.com/lambda/latest/dg/tutorial-scheduled-events-schedule-expressions.html).
 
 
-## 08.05 - Creating the lambda
+## 08.05 - Writing the Lambda code
 
 First of all install new dependencies.
 
