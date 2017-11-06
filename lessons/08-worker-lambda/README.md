@@ -79,6 +79,7 @@ SQS will look like the following:
   ]
 }
 ```
+([See this JSON in the browser](https://gist.githubusercontent.com/lmammino/ae072002e64b1e1e8372aac9b0158ea4/raw/85ffc54239e1134e4395955269311160cc01660d/example.json))
 
 So in order to get the real content of the message you will need to JSON-parse-it™
 twice as follows:
