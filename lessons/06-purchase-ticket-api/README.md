@@ -12,10 +12,6 @@
 
 In this lesson we will learn how to create an API that receives data through an HTTP POST request. How to do validation in lambdas and how to use external libraries.
 
-If you are already familiar with those concepts you can use the following Cloudformation template to apply the changes expected by this lesson and move forward to the next lesson.
-
-**TODO**: add Cloudformation template
-
 
 ### Contents
 

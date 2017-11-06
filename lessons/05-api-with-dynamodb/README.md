@@ -12,10 +12,6 @@
 
 In this lesson we will learn how to use the Node.js AWS SDK inside a Lambda and, more specifically, how to query DynamoDB with it.
 
-If you are already familiar with those concepts you can use the following Cloudformation template to apply the changes expected by this lesson and move forward to the next lesson.
-
-**TODO**: add Cloudformation template
-
 
 ### Contents
 

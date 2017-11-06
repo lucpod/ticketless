@@ -26,7 +26,17 @@ I hope you had fun along the way and that's just the beginning of your Serverles
 
 ## Resources for learning
 
-  - **TODO**
+  - [Build your first Serverless Web Application (by AWS)](https://aws.amazon.com/serverless/build-a-web-app/)
+  - [Getting Started with Serverless Computing on AWS (by Cloud Academy)](https://cloudacademy.com/learning-paths/getting-started-serverless-computing-25/)
+  - [AWS Lambda and the Serverless Framework - Hands On Learning! (by Udemy)](https://www.udemy.com/learn-aws-lambda-and-the-serverless-framework-hands-on/)
+  - [Build a Serverless Application with Code Star (by AWS) ](https://aws.amazon.com/getting-started/tutorials/build-serverless-application/)
+  - [Build a Serverless Blog Web Application (by AWS)](https://aws.amazon.com/serverless/refarch/refarch-webapp/)
+  - [Introduction to Serverless (by envato)](https://code.tutsplus.com/courses/introduction-to-serverless)
+  - [The Serverless Stack (article)](https://hackernoon.com/the-serverless-stack-3ae91031f050)
+  - [Serverless Node with AWS Lambda, API Gateway and DynamoDB (article)](https://node.university/blog/1176932/aws-serverless)
+  - [Going Serverless | AWS Lambda and Kinesis streams at busuu (article)](https://tech.busuu.com/going-serverless-aws-lambda-and-kinesis-streams-at-busuu-1434afe62041)
+  - [Aws Lambda in Action - Danilo Poccia (book)](https://www.manning.com/books/aws-lambda-in-action)
+  - [Serverless Architectures on AWS - Peter Sbarski (book)](https://www.manning.com/books/serverless-architectures-on-aws)
 
 
 ## Alternative frameworks

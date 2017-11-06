@@ -12,8 +12,6 @@
 
 In this lesson we will learn key concepts in Lambda Functions and API Gateway, two services that can allow you to build and deploy scalable REST APIs in a quick and efficient fashion.
 
-If you are already familiar with those concepts you can use skip to the next lesson.
-
 
 ### Contents
 

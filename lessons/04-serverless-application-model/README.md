@@ -12,10 +12,6 @@
 
 In this lesson we will learn how to develop, test and deploy Serverless applications by using the Serverless Application Model (SAM) specification. We will use these concepts to build the first iteration of our API that will be able to list all the available gigs and a specific gig, selected by ID (slug).
 
-If you are already familiar with those concepts you can use the following Cloudformation template to apply the changes expected by this lesson and move forward to the next lesson.
-
-**TODO**: add Cloudformation template
-
 
 ### Contents
 

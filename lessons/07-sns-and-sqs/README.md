@@ -12,10 +12,6 @@
 
 In this lesson we will learn how to use SNS to fire a generic event (a ticket was purchased) and how to register an SQS queue to listen for those events and store them for later processing.
 
-If you are already familiar with those concepts you can use the following Cloudformation template to apply the changes expected by this lesson and move forward to the next lesson.
-
-**TODO**: add Cloudformation template
-
 
 ### Contents
 

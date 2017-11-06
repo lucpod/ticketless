@@ -12,10 +12,6 @@
 
 In this lesson we will learn key concepts in DynamoDB, how to use Dynamo DB, how to create a table and how to load it with data from a file.
 
-If you are already familiar with those concepts you can use the following Cloudformation template to apply the changes expected by this lesson and move forward to the next lesson.
-
-**TODO**: add Cloudformation template
-
 
 ### Contents
 

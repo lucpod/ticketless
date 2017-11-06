@@ -11,10 +11,6 @@
 
 In this lesson we will learn how to host a static website using S3.
 
-If you are already familiar with those concepts you can use the following Cloudformation template to apply the changes expected by this lesson and move forward to the next lesson.
-
-**TODO**: add Cloudformation template
-
 
 ### Contents
 
