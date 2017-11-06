@@ -20,7 +20,20 @@ The application that you are going to build is the business of the future: as so
 
 Here are some screenshots of the application, to give you a feeling of what you will be building:
 
-**TODO**
+[Home Page](#hp)
+
+[![Home page](/resources/screenshots/home-thumb.png)](/resources/screenshots/home.png)
+
+
+[Gig page](#cp)
+
+[![Home page](/resources/screenshots/gig-page-thumb.png)](/resources/screenshots/gig-page.png)
+
+
+[Payment form](#pf)
+
+[![Payment Form](/resources/screenshots/payment-form-thumb.png)](/resources/screenshots/payment-form.png)
+
 
 ## What are you going to learn
 
@@ -33,7 +46,7 @@ During this exciting *aws-serverless-business-music-time-travel™* experience t
   - How to publish messages (pub/sub) through SNS
   - How to store unit of works on SQS
   - How to create background workers with AWS Lambda
-  - + a lot of other useful stuff, like:
+  - ... and a lot of other useful things, like:
     - Serverless Application Mode (SAM) and Cloudfront
     - AWS Roles, Policies and the security model in general
     - The AWS Command Line interface
