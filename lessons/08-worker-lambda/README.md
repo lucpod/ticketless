@@ -24,7 +24,94 @@ If you are already familiar with those concepts you can use the following Cloudf
 - [xxx](#xxx)
 
 
-## 08.01 - Sending emails from Node.js / Lambda
+## 08.01 - Consuming messages from an SQS queue
+
+You can consume a message from an SQS queue in a Lambda function by using the AWS
+SDK.
+
+The idea is that you start by pulling the queue for one or more messages, then you process the received payload,
+finally when the processing is done, you remove the message(s) from the queue to mark the job as
+completed.
+
+SQS, in fact, by default will put messages back in the queue if they are not deleted by the worker.
+This happens because the worker might crash before completing the processing of the message and the
+queue tries to protect you from losing messages.
+
+Using the AWS SDK, you can pull for a message as follows:
+
+```javascript
+const AWS = require('aws-sdk')
+const sqs = new AWS.SQS()
+
+const receiveMessageParams = {
+  QueueUrl: '<QueueURL>',
+  MaxNumberOfMessages: 1
+}
+
+sqs.receiveMessage(receiveMessageParams, (err, data) => {
+  if (err) {
+    console.error(err)
+  } else {
+    if (data.Messages) {
+      // some message was received
+      console.log(data.Messages)
+    } else {
+      console.log('No message available')
+    }
+  }
+})
+```
+
+If messages are fetched, `data.Messages` will be an array of messages.
+
+Since our messages are originally coming from SNS, the structure of data received from
+SQS will look like the following:
+
+```json
+{
+  "Messages": [
+    {
+      "Body": "{\n  \"Type\" : \"Notification\",\n  \"MessageId\" : \"abcdef01-2345-6789-0abc-defg123456783\",\n  \"TopicArn\" : \"arn:aws:sns:eu-west-1:123456789012:ticketless-ticketPurchased\",\n  \"Message\" : \"{\\\"ticket\\\":{\\\"id\\\":\\\"abcdef01-2345-6789-0abc-defg123456784\\\",\\\"createdAt\\\":1509980177897,\\\"name\\\":\\\"Alex Smith\\\",\\\"email\\\":\\\"email@example.com\\\",\\\"gig\\\":\\\"nirvana-cork-1991\\\"},\\\"gig\\\":{\\\"capacity\\\":2300,\\\"collectionPoint\\\":\\\"29 South Main Street, Centre, Cork City, Co. Cork, Ireland\\\",\\\"collectionTime\\\":\\\"13:00\\\",\\\"slug\\\":\\\"nirvana-cork-1991\\\",\\\"originalDate\\\":\\\"1991-08-20\\\",\\\"venue\\\":\\\"Cavern Club\\\",\\\"bandName\\\":\\\"Nirvana\\\",\\\"city\\\":\\\"Cork\\\",\\\"date\\\":\\\"2019-06-21\\\",\\\"image\\\":\\\"nirvana.jpg\\\",\\\"year\\\":\\\"1991\\\",\\\"collectionPointMap\\\":\\\"map-nirvana-cork-1991.png\\\",\\\"description\\\":\\\"Lorem Ipsum\\\",\\\"price\\\":\\\"1666.60\\\"}}\",\n  \"Timestamp\" : \"2017-11-06T14:56:18.123Z\",\n  \"SignatureVersion\" : \"1\",\n  \"Signature\" : \"someRandomLongString\",\n  \"SigningCertURL\" : \"https://sns.eu-west-1.amazonaws.com/SimpleNotificationService-12345678.pem\",\n  \"UnsubscribeURL\" : \"https://sns.eu-west-1.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:eu-west-1:123456789012:ticketless-ticketPurchased:abcdef01-2345-6789-0abc-defg123456785\"\n}",
+      "ReceiptHandle": "someRandomLongString",
+      "MD5OfBody": "abcdef1234567890abcdef1234567890",
+      "MessageId": "abcdef01-2345-6789-0abc-defg12345678"
+    }
+  ]
+}
+```
+
+So in order to get the real content of the message you will need to JSON-parse-it™
+twice as follows:
+
+
+```javascript
+const fistMessage = data.Messages[0]
+const firstMessageContent = JSON.parse(JSON.parse(fistMessage.Body).Message)
+```
+
+In order to acknowledge SQS that a message was processed and delete it from the queue,
+you can use the AWS SDK as follows:
+
+```javascript
+const AWS = require('aws-sdk')
+const sqs = new AWS.SQS()
+
+const deleteMessageParams = {
+  QueueUrl: '<QueueURL>',
+  ReceiptHandle: '<ReceiptHandle>' // Every message has a `ReceiptHandle` property
+}
+
+sqs.deleteMessage(deleteMessageParams, (err, data) => {
+  if (err) {
+    console.error(err)
+  }
+
+  console.log('message deleted successfully')
+})
+```
+
+
+## 08.02 - Sending emails from Node.js / Lambda
 
 Mention SES, complex setup, needed a domain.
 
@@ -108,7 +195,7 @@ sam deploy \
 TIP: You can create a more refined deploy script that loads the env before running the commands
 
 
-## 08.02 - Create worker lambda
+## 08.03 - Create worker lambda
 
 We need to define the role (so that the lambda can read from the queue and delete messages)
 
@@ -170,7 +257,7 @@ SendMailWorker:
 explain the schedule event
 
 
-## 08.03 - Creating the lambda
+## 08.04 - Creating the lambda
 
 First of all install new dependencies.
 
