@@ -136,7 +136,7 @@ If everything went fine you should be now able to list all the available SNS top
 the AWS cli and see our newly created topic:
 
 ```bash
-aws sns list-topics
+aws sns list-topics --region eu-west-1
 ```
 
 It should output something like this:
@@ -157,103 +157,102 @@ should definitely have the `ticketless-ticketPurchased` topic among them)
 
 ## 07.03 - Publishing a message from a Lambda
 
-... show the code changes
+At this point we are ready to update our `purchaseTicket` lambda in order to publish
+an SNS message containing the data for the current ticket and the data of the referenced
+gig.
 
-Install uuid (in src):
+Ideally our SNS message content should be an object containing two keys: `ticket` and `gig`:
 
-```bash
-npm i --save uuid
-```
+  - `ticket` is an object that should contain the following fields:
+    - `id`: a unique (and super-secret™) identification string used to verify the ticket validity
+    - `createdAt`: the timestamp of ticket creation
+    - `name`: the name of the owner of the ticket
+    - `email`: the email of the owner of the ticket
+    - `gig`: the slug of the gig associated to the ticket
 
-in `index.js`:
+  - `gig`: is the full object (as stored in DynamoDB) that represent the associated gig
 
-(Maybe explain better the basics of using sns and then structure this as an open exercise with a template)
+This is all the information we might need to use in our worker lambda and it's a good
+practice to propagate it directly in the SNS message.
+
+> 💡 **TIP**: you can easily generate a unique ID with the module [`uuid`](http://npm.im/uuid)
+
+> 💡 **TIP**: to generate the current timestamp you can simply use `Date.now()`
+
+Try now to update the `purchaseTicket` lambda to publish the expected SNS message
+just before returning the success response to API Gateway.
+
+To do this you can use the following template as a guide or check out my solution
+at [`resources/lambda/sns-sqs`](/resources/lambda/sns-sqs/src/index.js):
 
 ```javascript
-// ...
-const uuidv4 = require('uuid/v4')
-const sns = new AWS.SNS()
-
-// ...
-
-// fetch gig from DynamoDB
-  const queryParams = {
-    Key: {
-      slug: data.gig
-    },
-    TableName: 'gig'
-  }
-
-  docClient.get(queryParams, (err, dynamoData) => {
-    if (err) {
-      console.error(err)
-      return callback(null, {
-        statusCode: 500,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        },
-        body: JSON.stringify({error: 'Internal Server Error'})
-      })
-    }
-
-    // item not found, return 404
-    if (!dynamoData.Item) {
-      return callback(null, {
-        statusCode: 400,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        },
-        body: JSON.stringify({error: 'Invalid gig'})
-      })
-    }
-
-    const gig = dynamoData.Item
-    // creates a ticket object
-    const ticket = {
-      id: uuidv4(),
-      createdAt: Date.now(),
-      name: data.name,
-      email: data.email,
-      gig: data.gig
-    }
-
-    // fires an sns message with gig and ticket
-    sns.publish({
-      TopicArn: process.env.SNS_TOPIC_ARN,
-      Message: JSON.stringify({ticket, gig})
-    }, (err, data) => {
-      if (err) {
-        console.error(err)
-        return callback(null, {
-          statusCode: 500,
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-          },
-          body: JSON.stringify({error: 'Internal Server Error'})
-        })
-      }
-
-      // if everything went well return a 202 (accepted)
-      return callback(null, {
-        statusCode: 202,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        },
-        body: JSON.stringify({success: true})
-      })
-    })
-
 //...
+const sns = new AWS.SNS()
+//...
+
+exports.purchaseTicket = (event, context, callback) => {
+  // ... (previous validation logic)
+
+  // ... before sending the success response
+  // 1. fetch the current gig from DynamoDB
+  // 2. create the ticket object
+  // 3. create the SNS message
+  // 4. use the SDK to send the SNS message
+  // 5. if the message publishing fails respond with a 500
+  // 6. if it succeeds return the success message
+}
 ```
 
-... deploy
+When you feel that your code is ready you can deploy this new version of our app
+as usual:
 
-... offer some way to test this (maybe email subscription)
+```bash
+sam package --template-file template.yaml --s3-bucket $DEPLOYMENT_BUCKET --output-template-file packaged.yaml
+sam deploy --region eu-west-1 --template-file packaged.yaml --stack-name $STACK_NAME --capabilities CAPABILITY_IAM
+```
 
+If we try now to purchase a new ticket nothing visible really happens so that we can sure
+the feature is working as expected.
+
+Even if we implemented the SNS publishing correctly there's no topic *subscription* that is waiting
+for messages in our current setup, so when a message is published it simply gets discarded.
+
+An easy way to test this step is to create an email subscription so that we can receive
+an email everytime a new message is published in the `ticketPurchased` topic.
+
+You can create an email subscription with the following command:
+
+```bash
+aws sns subscribe \
+  --topic-arn <your topic ARN> \
+  --protocol email \
+  --notification-endpoint <your email>
+```
+
+Be sure to replace `<your topic ARN>` with your one (that you can retrieve with `aws sns list-topics`)
+and `<your email>` with an actual email you own.
+
+If the command worked correctly you should see the following output:
+
+```json
+{
+    "SubscriptionArn": "pending confirmation"
+}
+```
+
+To confirm the subscription, log in in your email account and check the last email from **AWS Notifications**.
+There should be there a link to click.
+
+After that you should be able to list all the currently available subscriptions with the following command:
+
+```bash
+aws sns list-subscriptions-by-topic --topic-arn <your topic ARN>
+```
+
+Now try again to purchase a ticket from the frontend application. This time, after few
+seconds, you should receive a message in your inbox!
+
+> 💡 **TIP**: if you want to delete the subscription you can do it so with the [`unsubscribe`](http://docs.aws.amazon.com/cli/latest/reference/sns/unsubscribe.html) command
 
 ## 07.04 - Connect SQS to SNS
 
