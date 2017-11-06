@@ -201,7 +201,7 @@ So at this point you can use any REST client of your choice (or even a browser) 
 
 If you did everything correctly this should be the expected output:
 
-`http://127.0.0.1:3000/gigs/`
+`http://127.0.0.1:3000/gigs`
 
 [![/gigs request expected result](expected-api-output1-thumb.png)](https://raw.githubusercontent.com/lucpod/ticketless/master/lessons/04-serverless-application-model/expected-api-output1.png)
 
