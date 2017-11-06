@@ -355,17 +355,13 @@ The syntax is very simple in this case, for more elaborate schedule rules you ca
 
 ## 08.05 - Writing the Lambda code
 
-So, here it goes with the fun part: let's write some lambda code:
+So, here it goes with the fun part: let's write some Lambda code to implement our worker.
 
-First of all install new dependencies.
+Before doing that remember to add `nodemailer` and `nodemailer-smtp-transport` as
+dependencies.
 
-From `src`:
-
-```bash
-npm i --save nodemailer nodemailer-smtp-transport
-```
-
-Update `index.js`:
+To understand the logic that should happen in this new Lambda you can use the
+following template:
 
 ```javascript
 //...
@@ -380,111 +376,56 @@ const sqs = new AWS.SQS()
 // ...
 
 exports.sendMailWorker = (event, context, callback) => {
-  const receiveMessageParams = {
-    QueueUrl: process.env.SQS_QUEUE_URL,
-    MaxNumberOfMessages: 1
-  }
-
-  sqs.receiveMessage(receiveMessageParams, (err, data) => {
-    if (err) {
-      console.error(err)
-      return callback(err)
-    }
-
-    if (!data.Messages) {
-      console.log('no messages to process')
-      return callback(null, 'no messages to process')
-    }
-
-    const message = data.Messages[0]
-
-    // extract message data from sqs message
-    // the double JSON parse is because the sqs message contains the original sns message
-    // in the body, so we are basically extracting the data from the `Message` attribute
-    // of the original sns message.
-    const messageData = JSON.parse(JSON.parse(message.Body).Message)
-
-    const transporter = nodemailer.createTransport(smtpTransport({
-      host: process.env.SMTP_HOST,
-      port: process.env.SMTP_PORT,
-      auth: {
-        user: process.env.SMTP_USERNAME,
-        pass: process.env.SMTP_PASSWORD
-      }
-    }))
-
-    const subject = `Your ticket for ${messageData.gig.bandName} in ${messageData.gig.city}`
-
-    const content = `
-Hey ${messageData.ticket.name},
-you are going to see ${messageData.gig.bandName} in ${messageData.gig.city}!
-
-This is the secret code that will give you access to our time travel collection point:
-
----
-${messageData.ticket.id}
----
-
-Be sure to show it to our staff at entrance.
-
-Collection point is placed in ${messageData.gig.collectionPoint}.
-Be sure to be there on ${messageData.gig.date} at ${messageData.gig.collectionTime}
-
-We already look forward (or maybe backward) to having you there, it's going to be epic!
-
-— Your friendly Ticketless staff
-
-PS: remember that is forbidden to place bets or do any other action that might substantially
-increase your net worth while time travelling. Travel safe!
-`
-
-    const mailOptions = {
-      from: process.env.SMTP_SENDER_ADDRESS,
-      to: messageData.ticket.email,
-      subject,
-      text: content
-    }
-
-    transporter.sendMail(mailOptions, (err, info) => {
-      if (err) {
-        console.error(err)
-        return callback(err)
-      }
-
-      // delete message from queue
-      const deleteMessageParams = {
-        QueueUrl: process.env.SQS_QUEUE_URL,
-        ReceiptHandle: message.ReceiptHandle
-      }
-
-      sqs.deleteMessage(deleteMessageParams, (err, data) => {
-        if (err) {
-          console.error(err)
-          return callback(err)
-        }
-
-        console.log('1 message processed successfully')
-        return callback(null, 'Completed')
-      })
-    })
-
-// ...
-
+  // - 1. Try to read a message from the queue
+  // - 2. If there are no messages stop the execution
+  // - 3. If there is a message retrieve the current ticket and the current gig from
+  //      the message body
+  // - 4. Use the ticket and the gig to create an email message to the ticket owner
+  // - 5. Send the email
+  // - 6. If the email send fails exit with an error
+  // - 7. If the email send succeeds delete the SQS message from the queue and exit
+  //      with success
+})
 ```
 
-TODO: reformat as template and structure as exercise where to fill in the gaps
+If you feel lost or if you need some inspiration you can consult my implementation
+in [`resources/lambda/worker-lambda`](/resources/lambda/worker-lambda/src/index.js).
 
-Deploy
+When you feel comfortable enough with the code you can deploy (this time make
+sure you have all the environment variables in your shell session):
 
-Test
+```bash
+sam package \
+  --template-file template.yaml \
+  --s3-bucket $DEPLOYMENT_BUCKET \
+  --output-template-file packaged.yaml
+
+sam deploy \
+  --region eu-west-1 \
+  --template-file packaged.yaml \
+  --stack-name $STACK_NAME \
+  --capabilities CAPABILITY_IAM \
+  --parameter-overrides \
+    "SmtpHost=$SMTP_HOST" \
+    "SmtpPort=$SMTP_PORT" \
+    "SmtpSenderAddress=$SMTP_SENDER_ADDRESS" \
+    "SmtpUsername=$SMTP_USERNAME" \
+    "SmtpPassword=$SMTP_PASSWORD"
+```
+
 
 ## Verify
 
-...
+If you did everything correctly, every time you purchase a new ticket, after one or more
+minutes you should see an email appearing in your *Mailtrap* account.
+
 
 ## Closing off
 
-...
+That's the end of our tutorial! Well done for making it to the end! 🙀
+
+If you need more insights or ideas to keep exploring the serverless world, there's
+a surprise! Check out the next section: [Extras](../extra)!
 
 
 ---
