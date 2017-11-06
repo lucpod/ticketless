@@ -37,3 +37,11 @@ SAM is the official solution from AWS to manage Serverless applications, but the
   - [Apex framework](http://apex.run)
   - [Dawson.sh](https://github.com/dawson-org/dawson-cli)
   - [Cloudformation](https://aws.amazon.com/cloudformation) or [Terraform](https://www.terraform.io) (If you really want to go low level)
+
+## Middleware frameworks
+
+Writing Lambda code sometimes ends up in a lot of duplication around things like: validation,
+error management, response creation, input parsing, etc.
+
+If you end up feeling that there should be a better way to write your Lambda code,
+check out [Middy](https://middy.js.org/), a middleware engine for AWS Lambda in Node.js

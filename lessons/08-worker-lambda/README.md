@@ -349,11 +349,13 @@ process.env.SMTP_PASSWORD
 Another new thing here is the `Schedule` event. The schedule event allows us to
 execute a Lambda at periodic intervals (in this case every minute).
 
-The syntax is very simple in this case, for more elaborate schedule you can even use
+The syntax is very simple in this case, for more elaborate schedule rules you can even use
 [cron expressions](http://docs.aws.amazon.com/lambda/latest/dg/tutorial-scheduled-events-schedule-expressions.html).
 
 
 ## 08.05 - Writing the Lambda code
+
+So, here it goes with the fun part: let's write some lambda code:
 
 First of all install new dependencies.
 
