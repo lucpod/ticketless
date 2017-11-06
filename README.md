@@ -20,19 +20,19 @@ The application that you are going to build is the business of the future: as so
 
 Here are some screenshots of the application, to give you a feeling of what you will be building:
 
-[Home Page](#hp)
+[Home Page](https://raw.githubusercontent.com/lucpod/ticketless/master/resources/screenshots/home.png)
 
-[![Home page](/resources/screenshots/home-thumb.png)](/resources/screenshots/home.png)
-
-
-[Gig page](#cp)
-
-[![Home page](/resources/screenshots/gig-page-thumb.png)](/resources/screenshots/gig-page.png)
+[![Home page](/resources/screenshots/home-thumb.png)](https://raw.githubusercontent.com/lucpod/ticketless/master/resources/screenshots/home.png)
 
 
-[Payment form](#pf)
+[Gig page](https://raw.githubusercontent.com/lucpod/ticketless/master/resources/screenshots/gig-page.png)
 
-[![Payment Form](/resources/screenshots/payment-form-thumb.png)](/resources/screenshots/payment-form.png)
+[![Gig page](/resources/screenshots/gig-page-thumb.png)](https://raw.githubusercontent.com/lucpod/ticketless/master/resources/screenshots/gig-page.png)
+
+
+[Payment form](https://raw.githubusercontent.com/lucpod/ticketless/master/resources/screenshots/payment-form.png)
+
+[![Payment Form](/resources/screenshots/payment-form-thumb.png)](https://raw.githubusercontent.com/lucpod/ticketless/master/resources/screenshots/payment-form.png)
 
 
 ## What are you going to learn
@@ -59,3 +59,5 @@ During this exciting *aws-serverless-business-music-time-travel™* experience t
 Well, yeah, it's about time you decided to get started! 😤
 
 Move to the [intro section](/lessons) and you'll see what to do next and what you need to begin with the first lesson!
+
+🙌 **Check out [the intro ▶︎](/lessons)**
