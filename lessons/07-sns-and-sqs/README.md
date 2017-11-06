@@ -143,11 +143,11 @@ It should output something like this:
 
 ```json
 {
-    "Topics": [
-        {
-            "TopicArn": "arn:aws:sns:eu-west-1:123456789012:ticketless-ticketPurchased"
-        }
-    ]
+  "Topics": [
+    {
+      "TopicArn": "arn:aws:sns:eu-west-1:123456789012:ticketless-ticketPurchased"
+    }
+  ]
 }
 ```
 
@@ -236,7 +236,7 @@ If the command worked correctly you should see the following output:
 
 ```json
 {
-    "SubscriptionArn": "pending confirmation"
+  "SubscriptionArn": "pending confirmation"
 }
 ```
 
@@ -254,55 +254,121 @@ seconds, you should receive a message in your inbox!
 
 > 💡 **TIP**: if you want to delete the subscription you can do it so with the [`unsubscribe`](http://docs.aws.amazon.com/cli/latest/reference/sns/unsubscribe.html) command
 
+
 ## 07.04 - Connect SQS to SNS
 
-Create SQS queue:
+We now have everything in place to fire SNS messages in our new topic.
+
+The next logical step is to create a queue and subscribe it to the SNS topic.
+
+We can achieve this by updating our `template.yaml`.
+
+The first change is to define the new queue as resource:
 
 ```yaml
 TicketPurchasedQueue:
-    Type: "AWS::SQS::Queue"
-    Properties:
-      QueueName: "ticketless-ticketPurchased"
+  Type: "AWS::SQS::Queue"
+  Properties:
+    QueueName: "ticketless-ticketPurchased"
 ```
 
-Add subscription to `TicketPurchasedTopic`:
+Then we have to update the `TicketPurchasedTopic` to add a subscription for our new queue:
 
 ```yaml
-Subscription:
-  - Endpoint: !GetAtt TicketPurchasedQueue.Arn
-    Protocol: "sqs"
+TicketPurchasedTopic:
+  Type: "AWS::SNS::Topic"
+  Properties:
+    TopicName: "ticketless-ticketPurchased"
+    Subscription:
+      - Endpoint: !GetAtt TicketPurchasedQueue.Arn
+        Protocol: "sqs"
 ```
 
-Create queue policy `QueuePolicy`:
+As you might have learned already, anything that happens in AWS needs an explicit permission
+in the form of a policy. The same goes for queues!
+
+In order to receive a message from some resource a queue need to have a policy that
+explicitly authorises that.
+
+So, let's create this `QueuePolicy` in the resource block of our `template.yaml`:
 
 ```yaml
 QueuePolicy:
-    Type: AWS::SQS::QueuePolicy
-    Properties:
-      Queues:
-        - Ref: TicketPurchasedQueue
-      PolicyDocument:
-        Version: "2012-10-17"
-        Id: "ReceiveFromSnsPolicy"
-        Statement:
-          - Sid: "ReceiveFromSns"
-            Effect: "Allow"
-            Principal: "*"
-            Action:
-              - sqs:SendMessage
-            Resource: "*"
-            Condition:
-              ArnEquals:
-                "aws:SourceArn": !Ref TicketPurchasedTopic
+  Type: AWS::SQS::QueuePolicy
+  Properties:
+    Queues:
+      - Ref: TicketPurchasedQueue
+    PolicyDocument:
+      Version: "2012-10-17"
+      Id: "ReceiveFromSnsPolicy"
+      Statement:
+        - Sid: "ReceiveFromSns"
+          Effect: "Allow"
+          Principal: "*"
+          Action:
+            - sqs:SendMessage
+          Resource: "*"
+          Condition:
+            ArnEquals:
+              "aws:SourceArn": !Ref TicketPurchasedTopic
 ```
 
-Deploy
+That's finally it! Ready to re-deploy:
 
-Test
+```bash
+sam package --template-file template.yaml --s3-bucket $DEPLOYMENT_BUCKET --output-template-file packaged.yaml
+sam deploy --region eu-west-1 --template-file packaged.yaml --stack-name $STACK_NAME --capabilities CAPABILITY_IAM
+```
 
-You should see messages accumulating in the queue
+If everything went fine you should now be able to see the new queue with the following command:
 
-Check command line tool to fetch messages from the queue
+```bash
+aws sqs list-queues --region eu-west-1
+```
+
+Which should output something like this:
+
+```json
+{
+  "QueueUrls": [
+    "https://eu-west-1.queue.amazonaws.com/123456789012/ticketless-ticketPurchased"
+  ]
+}
+```
+
+You can also check if the subscription was created correctly with:
+
+```bash
+aws sns list-subscriptions-by-topic --topic-arn <your topic ARN>
+```
+
+
+## Verify
+
+If everything went all right, you can now go back to the frontend and purchase a new ticket!
+
+Of course there's a command to check if messages are accumulating in the queue.
+
+Given that you already know the queue URL from the last step:
+
+```bash
+aws sqs get-queue-attributes \
+  --queue-url <your queue URL> \
+  --attribute-names "ApproximateNumberOfMessages"
+```
+
+This should output something like:
+
+```json
+{
+  "Attributes": {
+    "ApproximateNumberOfMessages": "0"
+  }
+}
+```
+
+The number of messages should increase while you keep purchasing tickets!
+
 
 ---
 
