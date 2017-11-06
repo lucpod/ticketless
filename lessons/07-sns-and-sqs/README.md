@@ -19,9 +19,10 @@ If you are already familiar with those concepts you can use the following Cloudf
 
 ### Contents
 
-- [xxx](#xxx)
-- [xxx](#xxx)
-- [xxx](#xxx)
+- [Understanding SNS and SQS](#0701---understanding-sns-and-sqs)
+- [Creating an SNS topic](#0702---creating-an-sns-topic)
+- [Publishing a message from a Lambda](#0703---publishing-a-message-from-a-lambda)
+- [Connect SQS to SNS](#0704---connect-sqs-to-sns)
 
 
 ## 07.01 - Understanding SNS and SQS
