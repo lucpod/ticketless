@@ -189,7 +189,7 @@ To familiarize more with these input and output abstractions, let's re-build a s
 suitable for API Gateway Lambda proxy integration that takes a `name` as query string parameter and returns a JSON body that contains `{"message": "Hello ${name}"}`.
 
 ```javascript
-#index.js
+//index.js
 exports.handler = (event, context, callback) => {
   // extract the query string parameter from the event (if not available, defaults to 'World')
   const name = event.queryStringParameters && event.queryStringParameters.name
