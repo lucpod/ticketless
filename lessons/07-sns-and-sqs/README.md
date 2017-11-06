@@ -30,7 +30,7 @@ If you are already familiar with those concepts you can use the following Cloudf
 
 SNS stands for Simple Notification Service and it's a service created by AWS to allow developers to easily fire notifications or dispatch messages across different system.
 
-In AWS's own words:
+In [AWS's own words](https://aws.amazon.com/sns/):
 
 > SNS is a pub/sub messaging service that makes it easy to decouple and scale microservices, distributed systems, and serverless applications
 
@@ -48,7 +48,7 @@ const sns = new AWS.SNS()
 
 sns.publish({
   TopicArn: 'the arn of the SNS topic',
-  Message: JSON.stringify({some: "data"})
+  Message: JSON.stringify({some: "arbitrary data"})
 }, (err, data) => {
   if (err) {
     console.log('Ooops, it did not work', err)
@@ -60,10 +60,18 @@ sns.publish({
 
 ### SQS
 
-...
+SQS (Simple Queue System) is a fully managed message queuing service that makes it easy to decouple and scale microservices, distributed systems, and serverless applications.
+
+You can use it to queue units of work can be performed asynchronously by one or more workers. Workers will periodically interrogate (*pull from*) the queue to see if there's work to do and report to the queue once some task is completed, so that no other work will try to perform it again.
+
+In our application we will subscribe the queue to the `TicketPurchased` SNS topic, so that every SNS notification gets stored in the Queue, then (in the next lesson) we will create a worker lambda that can process it.
+
+![Architecture diagram for SNS and SQS integraiton](architecture-diagram.png)
+
+In this lesson we will focus on publishing a message through SNS and making sure that it gets delivered in the queue. In the next lesson we will create the worker and we will see how to pull from a queue and mark a message as consumed (*deleting* it from the queue) by using the AWS SDK.
 
 
-## 07.02 - Firing an SNS message
+## 07.02 - Firing an SNS message when a ticket is purchased
 
 Create SNS topic with:
 
