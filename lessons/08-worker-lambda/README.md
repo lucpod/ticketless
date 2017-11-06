@@ -172,14 +172,18 @@ transporter.sendMail(mailOptions, (err, info) => {
 ```
 
 
-## 08.03 - Managing sensitive variables in Lambda
+## 08.03 - Managing configuration in Lambda
 
+It should be pretty much obvious at this point that we need a way to manage configuration parameters
+coming from the outside.
 
-We need to have a way to provide the above ones plus some extra parameters
+Ideally we don't want to embed these parameters directly in our `template.yaml`, but
+have some facility to inject them from the outside at deploy time, maybe from environment variables.
 
-  - sender email address (`SmtpSenderAddress`)
+Turns out that in SAM (and in Cloudformation), there is the concept of generic parameters.
 
-explain SAM parameters
+That's how we can add all the parameters we need for this lesson in our `template.yaml`:
+
 
 ```yaml
 # ...
@@ -201,12 +205,16 @@ Parameters:
     Description: "The password to authenticate to the SMTP server"
     Type: String
 
+Resources:
 # ...
 ```
 
-Briefly explain how you can pass values for these parameters on deploy:
+From now on, every time we deploy we have to specify values for these parameters,
+which is a bit annoying.
 
-For convenience you can create an `.env` file where you put your values:
+A strategy I often use in those cases is to create a file called `.env` (which I immediately add
+to my `.gitignore` to make sure I don't commit it by mistake! 😅) that contains
+the values for all the variables:
 
 ```bash
 # .env
@@ -217,17 +225,15 @@ export SMTP_USERNAME="xxx"
 export SMTP_PASSWORD="yyy"
 ```
 
-Use the `.env~sample` file as reference.
-
-Remember to ignore this file in case you are committing this to git.
-
-Now before every deploy you can
+Now when you start your development session you can run:
 
 ```bash
 source .env
 ```
 
-Command to deploy
+This will load all the sensitive values as environment variables in your current session.
+
+So now, for the entire duration of your shell session you can use the following command to deploy:
 
 ```bash
 sam deploy \
@@ -243,7 +249,12 @@ sam deploy \
     "SmtpPassword=$SMTP_PASSWORD"
 ```
 
-TIP: You can create a more refined deploy script that loads the env before running the commands
+> 💡 **TIP**: You can update your deploy script (if you created one previously) to
+include these changes.
+
+> 💡 **TIP**: In real production apps it can be a good idea to store these parameters
+in AWS by using dedicated services like [Systems Manager Parameter Store](http://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html) or [Config](https://aws.amazon.com/config). With those services you can also store these values as encrypted strings
+and fine tune the level of access to different users or systems.
 
 
 ## 08.04 - Create worker lambda
