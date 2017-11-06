@@ -323,7 +323,7 @@ https://abcdefghij.execute-api.eu-west-1.amazonaws.com/Prod
 So you can use this URL right now to test the APIs in your favorite REST client:
 
  - https://abcdefghij.execute-api.eu-west-1.amazonaws.com/Prod/gigs/
- - https://abcdefghij.execute-api.eu-west-1.amazonaws.com/Prod/band1-location1
+ - https://abcdefghij.execute-api.eu-west-1.amazonaws.com/Prod/gigs/band1-location1
 
 The resulting output should be the same you got while in testing the code locally.
 
