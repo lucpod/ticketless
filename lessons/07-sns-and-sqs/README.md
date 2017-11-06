@@ -26,19 +26,42 @@ If you are already familiar with those concepts you can use the following Cloudf
 
 ## 07.01 - Understanding SNS and SQS
 
-Generic intro about the 2 technologies.
+### SNS
 
-When they are useful.
+SNS stands for Simple Notification Service and it's a service created by AWS to allow developers to easily fire notifications or dispatch messages across different system.
 
-How are we going to use them.
+In AWS's own words:
 
-(maybe create a new section from here)
+> SNS is a pub/sub messaging service that makes it easy to decouple and scale microservices, distributed systems, and serverless applications
 
-AWS code to send an SNS message
+![SNS functionality diagram](https://d1.awsstatic.com/diagrams/product-page-diagrams/sns_diagram_1.7fc320874597e8c1bf3b0dd845fe89176aef0cda.png)
 
-AWS code to receive and acknowledge an SQS message
+In SNS messages are trasnmitted through communication channel identified as *topics*. When you create a topic, different services can *publish* or *subscribe* (receive) events over it.
+
+In our project we will use SNS to just dispatch a `TicketPurchased` event, leaving to other systems the role of picking the message up and performing other actions with it.
+
+You can easily fire messages using SNS with the AWS SDK library, here's an example:
+
+```javascript
+const AWS = require('aws-sdk')
+const sns = new AWS.SNS()
+
+sns.publish({
+  TopicArn: 'the arn of the SNS topic',
+  Message: JSON.stringify({some: "data"})
+}, (err, data) => {
+  if (err) {
+    console.log('Ooops, it did not work', err)
+  } else {
+    console.log('Message published!')
+  }
+})
+```
+
+### SQS
 
 ...
+
 
 ## 07.02 - Firing an SNS message
 
