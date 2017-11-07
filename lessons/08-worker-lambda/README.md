@@ -216,6 +216,8 @@ the values for all the variables:
 
 ```bash
 # .env
+export DEPLOYMENT_BUCKET=ticketless-lambda-deployment-abcdefg
+export STACK_NAME=ticketless
 export SMTP_HOST="smtp.mailtrap.io"
 export SMTP_PORT="465"
 export SMTP_SENDER_ADDRESS="staff@ticketless.com"

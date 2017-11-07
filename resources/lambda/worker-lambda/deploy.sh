@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 source .env
-export DEPLOYMENT_BUCKET=ticketless-lambda-deployment-abcdefg
-export STACK_NAME=ticketless
 
 sam package \
   --template-file template.yaml \
