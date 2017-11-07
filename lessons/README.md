@@ -26,4 +26,4 @@ Before getting started, make sure you have the following requirements:
 
 When you fulfilled all the requirements you are ready to go!
 
-**Get started with [Lesson 1 ▶︎](../01-deploying-frontend)**
+**Get started with [Lesson 1 ▶︎](/lessons/01-deploying-frontend)**
