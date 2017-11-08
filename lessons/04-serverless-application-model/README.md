@@ -348,6 +348,8 @@ window.apiBasePath = false
 
 Edit the file and change the value `false` with the URL of your gateway (e.g. `'https://abcdefghij.execute-api.eu-west-1.amazonaws.com/Prod'`) and save the file.
 
+> 💡 **TIP**: Be sure **NOT** to add a trailing `/` at the end of the config string as the frontend application will not escape that.
+
 Now you have to upload the edited file to S3 again:
 
 ```bash
