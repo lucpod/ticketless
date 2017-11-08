@@ -225,6 +225,8 @@ export SMTP_USERNAME="xxx"
 export SMTP_PASSWORD="yyy"
 ```
 
+> 💡 **TIP**: If you do this, be sure to replace the `DEPLOYMENT_BUCKET`, `SMTP_USERNAME` and `SMTP_PASSWORD` with your actual value.
+
 Now when you start your development session you can run:
 
 ```bash
