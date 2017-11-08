@@ -93,9 +93,9 @@ To do this we have to append the following statement in our existing policy unde
 the `GigsApiRole`.
 
 ```yaml
-- Action:
+- Effect: Allow
+  Action:
   - sns:Publish
-  Effect: Allow
   Resource:
     Ref: TicketPurchasedTopic
 ```
