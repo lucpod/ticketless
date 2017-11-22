@@ -37,6 +37,7 @@ I hope you had fun along the way and that's just the beginning of your Serverles
   - [Going Serverless | AWS Lambda and Kinesis streams at busuu (article)](https://tech.busuu.com/going-serverless-aws-lambda-and-kinesis-streams-at-busuu-1434afe62041)
   - [Aws Lambda in Action - Danilo Poccia (book)](https://www.manning.com/books/aws-lambda-in-action)
   - [Serverless Architectures on AWS - Peter Sbarski (book)](https://www.manning.com/books/serverless-architectures-on-aws)
+  - [How to use Native Addon on AWS](https://aws.amazon.com/it/blogs/compute/nodejs-packages-in-lambda)
 
 
 ## Alternative frameworks
