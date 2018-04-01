@@ -38,7 +38,7 @@ To create a bucket in your account you can run the following command:
 
 ```bash
 export FRONTEND_BUCKET=ticketless-frontend-$(head /dev/urandom | env LC_CTYPE=C tr -cd 'a-z0-9' | head -c 6)
-aws s3 mb s3://$FRONTEND_BUCKET --region eu-west-1
+aws s3 mb s3://$FRONTEND_BUCKET
 ```
 
 > 💡 **TIP**: `mb` stands for **Make Bucket**
@@ -54,7 +54,7 @@ make_bucket: ticketless-frontend-xxxyyy
 To verify that the bucket is there you can now run:
 
 ```bash
-aws s3 ls --region eu-west-1
+aws s3 ls
 ```
 
 This command will list all the buckets created in your account in the specified region.

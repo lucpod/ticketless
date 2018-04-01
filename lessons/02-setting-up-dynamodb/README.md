@@ -74,11 +74,10 @@ In order to create the `gig` table (where we are going to store all the availabl
 
 ```bash
 aws dynamodb create-table \
-  --region eu-west-1 \
   --table-name gig \
   --attribute-definitions AttributeName=slug,AttributeType=S \
   --key-schema AttributeName=slug,KeyType=HASH \
-  --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
+  --provisioned-throughput ReadCapacityUnits=12,WriteCapacityUnits=12
 ```
 
 In this command the option `attribute-definitions` allows us to specify the name and the type of the attributes we will use as keys with the `key-schema` option. In this case we are defining the `slug` field as *string* (type `S` in DynamoDB) to be a simple *partition key*. We don't need to use a sort key in this case.
@@ -119,7 +118,7 @@ If the previous command was executed successfully you should see an output like 
 
 > 💡 **TIP**: You can list all the tables available in your DynamoDB with the following command:
 > ```bash
-> aws dynamodb list-tables --region eu-west-1
+> aws dynamodb list-tables
 > ```
 
 
@@ -130,7 +129,7 @@ A file containing all the data we need for our `gig` table is already created an
 In order to load this data into our DynamoDB table, we have to issue the following command:
 
 ```bash
-aws dynamodb batch-write-item --request-items file://resources/dynamodb/gig.json
+aws dynamodb batch-write-item --request-items fileb://resources/dynamodb/gig.json
 ```
 
 If the command was executed successfully you should see the following output:
