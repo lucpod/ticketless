@@ -56,4 +56,5 @@ Store them in a safe place as you won't be able to visualize this a second time.
 
 ## That's all!
 
-Have fun 🤓 and remember to delete this user at the end of the workshop
+Have fun 🤓 and **remember to delete this user at the end of the workshop** if you
+want to keep your AWS account clean and safe.
