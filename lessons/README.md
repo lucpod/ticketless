@@ -23,6 +23,8 @@ Before getting started, make sure you have the following requirements:
  - A [bash](https://www.gnu.org/software/bash) compatible shell
  - [Docker](https://www.docker.com/)
  - [SAM / SAM Local](https://github.com/awslabs/aws-sam-local)
+ 
+⭐️ If you are lazy (which is good) or you don't want to install all this stuff in your laptop just for a workshop, you can use our [**amazing helper container**](https://github.com/lucpod/serverless-workshop-helper-container) that already contains all of these!
 
 When you fulfilled all the requirements you are ready to go!
 
