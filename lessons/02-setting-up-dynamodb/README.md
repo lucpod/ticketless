@@ -82,7 +82,7 @@ aws dynamodb create-table \
 
 In this command the option `attribute-definitions` allows us to specify the name and the type of the attributes we will use as keys with the `key-schema` option. In this case we are defining the `slug` field as *string* (type `S` in DynamoDB) to be a simple *partition key*. We don't need to use a sort key in this case.
 
-The option `provisioned-throughput` is a slightly more complex one and you don't really need to understand it until you start to be concerned about scaling your database throughtput. In brief, it allows to allocate the necessary resources for your throughtput needs and guarantee consistency. If you are interested in knowing more you can consult the [official documentation](provisioned-throughput) about this topic.
+The option `provisioned-throughput` is a slightly more complex one and you don't really need to understand it until you start to be concerned about scaling your database throughput. In brief, it allows to allocate the necessary resources for your throughput needs and guarantee consistency. If you are interested in knowing more you can consult the [official documentation](provisioned-throughput) about this topic.
 
 If the previous command was executed successfully you should see an output like the following:
 
@@ -130,6 +130,12 @@ In order to load this data into our DynamoDB table, we have to issue the followi
 
 ```bash
 aws dynamodb batch-write-item --request-items fileb://resources/dynamodb/gig.json
+```
+
+Alternatively, if you don't have the repository file locally you can run the following command:
+
+```bash
+aws dynamodb batch-write-item --request-items https://raw.githubusercontent.com/lucpod/ticketless/master/resources/dynamodb/gig.json
 ```
 
 If the command was executed successfully you should see the following output:
