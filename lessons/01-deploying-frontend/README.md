@@ -80,6 +80,12 @@ aws s3 cp resources/frontend s3://$FRONTEND_BUCKET --recursive --exclude 'node_m
 
 > 💡 **TIP**: the `--exclude` option will make sure that we won't copy files that are not needed for the frontend to work (in this case the `node_modules` folder which is used only for development dependencies).
 
+Alternatively, if you don't have the resource files locally, you can copy them from a public S3 bucket with the following command:
+
+```bash
+aws s3 cp --recursive s3://ticketless-resources s3://$FRONTEND_BUCKET
+```
+
 If you want to make sure the files are there, you can run again the command:
 
 ```

@@ -37,6 +37,7 @@ In the rest of this workshop you'll be running commands and editing files in thi
 > curl -o .env https://raw.githubusercontent.com/lucpod/serverless-workshop-helper-container/master/.env~SAMPLE
 > # Edit the .env file and add your AWS credentials settings
 >
+> docker pull lucpod/workshop:latest
 > docker-compose up -d
 > docker-compose exec workshop bash
 >
