@@ -27,6 +27,10 @@ Before getting started, make sure you have the following requirements:
 
 > ⭐️ If you are lazy (which is good) or you don't want to install all this stuff in your laptop just for a workshop, you can use our [**amazing helper container**](https://github.com/lucpod/serverless-workshop-helper-container) that already contains all of these!
 
-When you fulfilled all the requirements you are ready to go!
+When you fulfilled all the requirements, **create a folder called `workshop`** (or anything you want, really 😜) somewhere in your machine.
+
+In the rest of this workshop you'll be running commands and editing files in this directory.
+
+Now you are ready to go! 👍
 
 **Get started with [Lesson 1 ▶︎](/lessons/01-deploying-frontend)**
