@@ -33,15 +33,15 @@ In the rest of this workshop you'll be running commands and editing files in thi
 
 > ⭐️ If you decided to use the [**amazing helper container**](https://github.com/lucpod/serverless-workshop-helper-container) you have to initialize it with the following commands (from within your workshop folder):
 > ```bash
-  curl -O https://raw.githubusercontent.com/lucpod/serverless-workshop-helper-container/master/docker-compose.yml
-  curl -o .env https://raw.githubusercontent.com/lucpod/serverless-workshop-helper-container/master/.env~SAMPLE
-  # Edit the .env file and add your AWS credentials settings
-
-  docker-compose up -d
-  docker-compose exec workshop bash
-
-  # You'll be running all the commands from this terminal!
-```
+> curl -O https://raw.githubusercontent.com/lucpod/serverless-workshop-helper-container/master/docker-compose.yml
+> curl -o .env https://raw.githubusercontent.com/lucpod/serverless-workshop-helper-container/master/.env~SAMPLE
+> # Edit the .env file and add your AWS credentials settings
+>
+> docker-compose up -d
+> docker-compose exec workshop bash
+>
+> # You'll be running all the commands from this terminal!
+> ```
 
 Now you are ready to go! 👍
 
