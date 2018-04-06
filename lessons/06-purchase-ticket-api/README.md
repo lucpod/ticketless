@@ -181,7 +181,7 @@ Resources:
     Properties:
       CodeUri: ./src
       Handler: index.purchaseTicket
-      Runtime: nodejs6.10
+      Runtime: nodejs8.10
       Role: !GetAtt GigsApiRole.Arn
       Events:
         Endpoint:
@@ -255,7 +255,7 @@ Resources:
     Properties:
       CodeUri: ./src
       Handler: index.cors
-      Runtime: nodejs6.10
+      Runtime: nodejs8.10
       Events:
         Endpoint:
           Type: Api

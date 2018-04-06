@@ -20,7 +20,7 @@ Before getting started, make sure you have the following requirements:
  - Your own [AWS account](https://aws.amazon.com/free)
  - An AWS user with Admin access and Programmatic Access ([See how to create one](/lessons/extra/CREATE_AWS_USER.md))
  - [AWS Command Line Interface](https://aws.amazon.com/cli) installed and configured
- - [Node.js](https://nodejs.org) (v6.10 or higher)
+ - [Node.js](https://nodejs.org) (v8.10 or higher)
  - A [bash](https://www.gnu.org/software/bash) compatible shell
  - [Docker](https://www.docker.com/)
  - [SAM / SAM Local](https://github.com/awslabs/aws-sam-local)

@@ -318,7 +318,7 @@ Resources:
     Properties:
       CodeUri: ./src
       Handler: index.sendMailWorker
-      Runtime: nodejs6.10
+      Runtime: nodejs8.10
       Role: !GetAtt SendMailWorkerRole.Arn
       Environment:
         Variables:

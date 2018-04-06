@@ -119,7 +119,7 @@ Let's analyze the content of this file:
 
   - The property `CodeUri` is used to specify where the code for the lambda is stored, while `Handler` is used to indicate which file and function needs to be loaded by to run the Lambda. This parameter uses the format `fileName.functionName`. For example when we specify `index.listGigs`, the Lambda runtime will load the file `index.js` in our code path and from this file import the function `listGigs`.
 
-  - `Runtime` indicates which runtime we want to use to run the code (in our case Node.js version 6.10)
+  - `Runtime` indicates which runtime we want to use to run the code (in our case Node.js version 8.10)
 
   - `Events` is a dictionary that describes all the events that will trigger the execution of the Lambda function. Every event is identified by an arbitrary name (in our case we choose `Endpoint`). An event object needs to have a `Type` (in the case of API Gateway it's simply `Api`) and a set of `Properties`. Properties will change based on the type of event, for Api events we specified a `Path` and a `Method`.
 
