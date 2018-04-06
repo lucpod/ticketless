@@ -115,7 +115,7 @@ Resources:
     Properties:
       CodeUri: ./src
       Handler: index.listGigs
-      Runtime: nodejs6.10
+      Runtime: nodejs8.10
       Role: !GetAtt GigsApiRole.Arn
 
       Events:
@@ -130,7 +130,7 @@ Resources:
     Properties:
       CodeUri: ./src
       Handler: index.gig
-      Runtime: nodejs6.10
+      Runtime: nodejs8.10
       Role: !GetAtt GigsApiRole.Arn
       Events:
         Endpoint:
@@ -144,7 +144,7 @@ Resources:
     Properties:
       CodeUri: ./src
       Handler: index.purchaseTicket
-      Runtime: nodejs6.10
+      Runtime: nodejs8.10
       Role: !GetAtt GigsApiRole.Arn
       Environment:
         Variables:
@@ -161,7 +161,7 @@ Resources:
     Properties:
       CodeUri: ./src
       Handler: index.cors
-      Runtime: nodejs6.10
+      Runtime: nodejs8.10
       Events:
         Endpoint:
           Type: Api
@@ -174,7 +174,7 @@ Resources:
     Properties:
       CodeUri: ./src
       Handler: index.sendMailWorker
-      Runtime: nodejs6.10
+      Runtime: nodejs8.10
       Role: !GetAtt SendMailWorkerRole.Arn
       Environment:
         Variables:

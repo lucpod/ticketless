@@ -7,7 +7,6 @@ sam package \
   --output-template-file packaged.yaml
 
 sam deploy \
-  --region eu-west-1 \
   --template-file packaged.yaml \
   --stack-name $STACK_NAME \
   --capabilities CAPABILITY_IAM \

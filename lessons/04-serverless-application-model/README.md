@@ -38,16 +38,17 @@ AWS SAM defines a set of objects which can be included in a CloudFormation templ
 
 ## 04.02 - SAM template for our application
 
-Before starting to explore SAM let's explore the expected file structure of our SAM project:
+Before starting to explore SAM let's create a new folder called `lambda` and let's explore the expected file structure of the SAM project that we will create inside it:
 
 ```
 .
-├── src
-│   └── index.js
-└── template.yaml
+`-- lambda
+    |-- src
+    |   `-- index.js
+    `-- template.yaml
 ```
 
-In our project folder we have 2 files:
+In our new `lambda` folder we have 2 files:
 
   - `src/index.js`: the file containing the code for our Lambda functions
   - `template.yaml`: a YAML file that describes the configuration of our serverless application following the SAM specification.
@@ -77,7 +78,7 @@ Resources:
     Properties:
       CodeUri: ./src
       Handler: index.listGigs
-      Runtime: nodejs6.10
+      Runtime: nodejs8.10
       Events:
         Endpoint:
           Type: Api
@@ -90,7 +91,7 @@ Resources:
     Properties:
       CodeUri: ./src
       Handler: index.gig
-      Runtime: nodejs6.10
+      Runtime: nodejs8.10
       Events:
         Endpoint:
           Type: Api
@@ -182,7 +183,7 @@ This code fills the array `mockGigs` with a list of 12 gigs, using the structure
 
 Try to fill the blanks in the sample implementation above and write the code that implements all the steps. If you get stuck, or you prefer to be guided through it, you can see a solution in [`resources/lambda/gig-api-mock`](/resources/lambda/gig-api-mock/src/index.js).
 
-> 💡 **TIP**: Since the frontend will invoke these APIs from a different documentation, the APIs response need to have the header:
+> 💡 **TIP**: Since the frontend will invoke these APIs from a different domain, the APIs response need to have the header:
 >
 > ```plain
 > Access-Control-Allow-Origin: *
@@ -192,6 +193,12 @@ When you think you are ready to test your implementation you can run a local ver
 
 ```bash
 sam local start-api
+```
+
+If you are using the [helper container](https://github.com/lucpod/serverless-workshop-helper-container), then you need to pass some extra parameter to make sure you expose the SAM test server to your main host machine:
+
+```bash
+sam local start-api -v $PARENT_PWD/lambda/src --host 0.0.0.0
 ```
 
 This command will spin up some local docker containers that simulates API Gateway and the Lambda Runtime and expose the APIs over the base path `http://127.0.0.1:3000`.
@@ -218,7 +225,7 @@ In order to deploy a Lambda you need to create a deployment S3 bucket:
 
 ```bash
 export DEPLOYMENT_BUCKET=ticketless-lambda-deployment-$(head /dev/urandom | env LC_CTYPE=C tr -cd 'a-z0-9' | head -c 6)
-aws s3 mb s3://$DEPLOYMENT_BUCKET --region eu-west-1
+aws s3 mb s3://$DEPLOYMENT_BUCKET
 ```
 
 As seen in [lesson 1](../01-deploying-frontend#0101---create-a-bucket), this sequence of commands will create a bucket with a random name. If everything worked as expected you should see the following output:
@@ -251,7 +258,7 @@ As you might have noticed, the command line is already suggesting you what's the
 
 ```bash
 export STACK_NAME=ticketless
-sam deploy --region eu-west-1 \
+sam deploy \
   --template-file packaged.yaml \
   --stack-name $STACK_NAME \
   --capabilities CAPABILITY_IAM
@@ -278,13 +285,13 @@ Successfully created/updated stack - ticketless
 > export DEPLOYMENT_BUCKET=ticketless-lambda-deployment-abcdefg
 > export STACK_NAME=ticketless
 > sam package --template-file template.yaml --s3-bucket $DEPLOYMENT_BUCKET --output-template-file packaged.yaml
-> sam deploy --region eu-west-1 --template-file packaged.yaml --stack-name $STACK_NAME --capabilities CAPABILITY_IAM
+> sam deploy --template-file packaged.yaml --stack-name $STACK_NAME --capabilities CAPABILITY_IAM
 > ```
 
 
 ## 04.05 - Discovering the API endpoint
 
-Our applications is now deployed and we have some new Lambdas and an API Gateway configured in our account. The logic question now is "How can I invoke my API?"
+Our applications is now deployed and we have some new Lambdas and an API Gateway configured in our account. The logic question now is *"How can I invoke my API?"*.
 
 In order to do so we need to discover what's the API endpoint the API Gateway assigned to our newly deployed gateway.
 
@@ -332,7 +339,7 @@ The resulting output should be the same you got while in testing the code locall
 
 Finally, we know what is the endpoint of our new API, so we can update the configuration of our frontend app.
 
-In order to dowload the current configuration file from S3 you can run the following command:
+In order to download the current configuration file from S3 you can run the following command:
 
 ```bash
 aws s3 cp s3://$FRONTEND_BUCKET/js/config.js .
@@ -361,7 +368,7 @@ Now your frontend should use your newly created mock APIs.
 
 ## Verify
 
-If you followed these instructions carefully, you should now be able to visit the URL of the application (from lesson 1) and see that the page is now displaying our mock data.
+If you followed these instructions carefully, you should now be able to visit the URL of the application (from lesson 1) and see that the page is now displaying our **mock** data.
 
 If you inspect the network traffic you will also see that now the frontend application makes direct call to our new API from API Gateway.
 

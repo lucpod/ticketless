@@ -9,7 +9,7 @@ Resources:
     Properties:
       CodeUri: ./src
       Handler: index.listGigs
-      Runtime: nodejs6.10
+      Runtime: nodejs8.10
       Events:
         Endpoint:
           Type: Api
@@ -22,7 +22,7 @@ Resources:
     Properties:
       CodeUri: ./src
       Handler: index.gig
-      Runtime: nodejs6.10
+      Runtime: nodejs8.10
       Events:
         Endpoint:
           Type: Api
