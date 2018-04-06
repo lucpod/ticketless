@@ -195,7 +195,7 @@ When you think you are ready to test your implementation you can run a local ver
 sam local start-api
 ```
 
-If you are using the [helper container](https://github.com/lucpod/serverless-workshop-helper-container), then you need to pass some extra parameter to make sure you expose the SAM test server to your main host machine:
+If you are using the [helper container](https://github.com/lucpod/serverless-workshop-helper-container), then you need to pass some extra parameters to make sure you expose the SAM test server to your main host machine:
 
 ```bash
 sam local start-api -v $PARENT_PWD/lambda/src --host 0.0.0.0

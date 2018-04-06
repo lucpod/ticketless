@@ -18,7 +18,7 @@ In this lesson we will learn how to use the Node.js AWS SDK inside a Lambda and,
 - [Understanding Policies and Roles in AWS](#0501---understanding-policies-and-roles-in-aws)
 - [Creating a role to access our DynamoDB table](#0502---creating-a-role-to-access-our-dynamodb-table)
 - [Accessing DynamoDB with the AWS SDK](#0503---accessing-dynamodb-with-the-aws-sdk)
-- [Using DynamoDB in oru APIs](#0504---using-dynamodb-in-oru-apis)
+- [Using DynamoDB in our APIs](#0504---using-dynamodb-in-oru-apis)
 
 
 ## 05.01 - Understanding Policies and Roles in AWS
@@ -47,7 +47,7 @@ When dealing with compute resources (like EC2 instances or Lambda functions), by
 
 When deploying with SAM, by default, every Lambda gets attached a new role that uses the policy [AWSLambdaBasicExecutionRole](http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html#lambda-intro-execution-role).
 
-`AWSLambdaBasicExecutionRole` guarantees to the Lambda only the minimum set of privileges needed to write logs to Cloudwatch. If you try to access any other resource, you Lambda execution will simply fail with a permission error.
+`AWSLambdaBasicExecutionRole` guarantees to the Lambda only the minimum set of privileges needed to write logs to Cloudwatch. If you try to access any other resource, your Lambda execution will simply fail with a permission error.
 
 So, what if we want to guarantee our Lambda a specific privilege, for example reading from a DynamoDB table or writing to an S3 bucket?
 
@@ -104,7 +104,7 @@ Resources:
 The first thing to notice is that a role resource has type `AWS::IAM::Role` and 3 main properties: `ManagedPolicyArns`, `AssumeRolePolicyDocument` and `Policies`.
 
   - `ManagedPolicyArns` allows the new role to inherit already existing policies in your AWS account. We use this capability to inherit the permissions from the `AWSLambdaBasicExecutionRole`. This way Lambda functions with this role will retain the capability to write logs to Cloudwatch.
-  - `AssumeRolePolicyDocument` describes a specific policy that is needed for allowing the Lambda to assume a role and inherit its permissions.
+  - `AssumeRolePolicyDocument` describes a specific policy that is needed to allow the Lambda to assume a role and inherit its permissions.
   - `Policies` is an array of policy directly created and attached to the role (inline policies). We use this option to create a policy that guarantees the capability to perform `Scan` and `GetItem` operation on our DynamoDB `gig` table. So at this stage we are basically guaranteeing read only access to the given DynamoDB table.
 
 This change in our SAM template will make so that the next time we deploy the packaged template the role `GigsApiRole` will be created. But this is not enough to give permissions to our Lamba functions, because we still have to *attach* the new role to our functions.
@@ -121,7 +121,7 @@ At this point, if you did everything correctly, you should be able to re-package
 
 ```bash
 sam package --template-file template.yaml --s3-bucket $DEPLOYMENT_BUCKET --output-template-file packaged.yaml
-sam deploy --region eu-west-1 --template-file packaged.yaml --stack-name $STACK_NAME --capabilities CAPABILITY_IAM
+sam deploy --template-file packaged.yaml --stack-name $STACK_NAME --capabilities CAPABILITY_IAM
 ```
 
 The code is not changed, so the API still returns mock data, but now the underlying Lambda functions have the permission to read from our DynamoDB table.
@@ -208,7 +208,7 @@ docClient.get(queryParams, (err, data) => {
 ```
 
 
-## 05.04 - Using DynamoDB in oru APIs
+## 05.04 - Using DynamoDB in our APIs
 
 Now we should have acquired the needed knowledge to update our Lambda functions and make use of DynamoDB to fetch the data.
 
@@ -243,7 +243,7 @@ Once you are confident enough about your update API you can run a new deploy:
 
 ```bash
 sam package --template-file template.yaml --s3-bucket $DEPLOYMENT_BUCKET --output-template-file packaged.yaml
-sam deploy --region eu-west-1 --template-file packaged.yaml --stack-name $STACK_NAME --capabilities CAPABILITY_IAM
+sam deploy --template-file packaged.yaml --stack-name $STACK_NAME --capabilities CAPABILITY_IAM
 ```
 
 
