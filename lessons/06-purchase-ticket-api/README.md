@@ -25,11 +25,12 @@ In this lesson we will learn how to create an API that receives data through an 
 
 In the Lambda functions code it is possible to use external dependencies from NPM as in any other Node.js project.
 
-In order to use external dependencies, we have to create a `package.json` file in our `src` folder.
+In order to use external dependencies, we have to create a `package.json` file **in our `src` folder**.
 
 To do so, move your command line inside the `src` folder and run:
 
 ```bash
+cd src
 npm init -y
 ```
 
@@ -60,9 +61,9 @@ const validator = require('validator')
 
 ## 06.02 - API for tickets purchase
 
-A big part of our application is to be able to sell tickets for the gigs.
+A big part of our application is to be able to sell tickets for the gigs (everyone wants to make money, right? 🤑).
 
-In every gig page, the frontend already exposes a form to do the purchase at the bottom of the page.
+In every gig page, the frontend already displays a form to buy tickets at the bottom of the page.
 
 ![Purchase ticket form](payment-form.png)
 
@@ -115,7 +116,7 @@ The API we want to implement needs to process the input, verify that it's a vali
   }
   ```
 
-**Note** that the API doesn't really try to attempt to charge the given credit card but, for the sake of this tutorial, only checks if the format looks valid. Be good, **NO MONEY SHOULD BE TAKEN** from the given credit card 😇
+**Note** that the API doesn't really attempt to charge the given credit card but, for the sake of this tutorial, only checks if the format looks valid. Be good, **NO MONEY SHOULD BE TAKEN** from the given credit card (for now) 😇
 
 You can add the code as a new function in `index.js` by following this template:
 
@@ -193,11 +194,11 @@ Resources:
 # ...
 ```
 
-At this point, we are ready to deploy the new version of our Application:
+At this point, we are ready to deploy the new version of our Application (from outside the `src` folder 🤓):
 
 ```bash
 sam package --template-file template.yaml --s3-bucket $DEPLOYMENT_BUCKET --output-template-file packaged.yaml
-sam deploy --region eu-west-1 --template-file packaged.yaml --stack-name $STACK_NAME --capabilities CAPABILITY_IAM
+sam deploy --template-file packaged.yaml --stack-name $STACK_NAME --capabilities CAPABILITY_IAM
 ```
 
 
@@ -211,16 +212,18 @@ If you did everything correctly in the previous steps, you should see... this er
 
 This errors happens as part of the CORS protocol.
 
-When some JavaScript code in the browser invokes an XHR request to another domain, the browser might issue a [Pre-Flight request](https://developer.mozilla.org/en-US/docs/Glossary/Preflight_request) to check if the destination API can receive call from the current domain (where the website is running).
+When some JavaScript code in the browser invokes an XHR request to another domain, the browser might issue a [Pre-Flight request](https://developer.mozilla.org/en-US/docs/Glossary/Preflight_request) to check if the destination API can receive call from the current domain (the one where the website originating the request is running).
 
-During Pre-flight the browser sends an OPTIONS request before your actual request gets sent, which the server typically responds with the options available e.g POST, PUT etc.. along with that in the headers will be Access Control rules.
+During Pre-flight the browser sends an OPTIONS request before your actual request gets sent. The browser expects to receive as response to this request a set of headers that specify which domains can invoke the API and which methods (POST, PUT, etc.) can be used (these are often called *"Access Control rules"*). These headers are validated against the current request and if it matches the given rules, then the original request is actually performed.
 
 > 💡 **TIP**: If you need more detail on how CORS actually works, check out this brilliant article: [Understanding CORS and Pre-Flight](http://www.authenticdesign.co.uk/understanding-cors-and-pre-flight/)
 
 
 In order to make our API work, we need to add CORS support to our application.
 
-We can do that by creating a Lambda that can respond to the Pre-Flight Request and map it to any `OPTIONS` request in API Gateway.
+There are different ways to do this, and there's also a ["native" way](https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#cors-configuration), but it works only if you define a complete swagger file for your APIs, so we are going to use another method.
+
+Our method is a bit more crafty, but allows us to have more control (and to understand better how CORS actually works). We will need to create a Lambda that can respond to the Pre-Flight Request and map it to any `OPTIONS` request in API Gateway.
 
 This is the Lambda code you need to add in the `index.js` file:
 
@@ -270,7 +273,7 @@ Now we are ready to deploy our app again:
 
 ```bash
 sam package --template-file template.yaml --s3-bucket $DEPLOYMENT_BUCKET --output-template-file packaged.yaml
-sam deploy --region eu-west-1 --template-file packaged.yaml --stack-name $STACK_NAME --capabilities CAPABILITY_IAM
+sam deploy --template-file packaged.yaml --stack-name $STACK_NAME --capabilities CAPABILITY_IAM
 ```
 
 At this stage, when we test our purchase form again we should see a nice green success message 🤑:
