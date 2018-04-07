@@ -44,7 +44,7 @@ I hope you had fun along the way and that's just the beginning of your Serverles
 
 SAM is the official solution from AWS to manage Serverless applications, but there are a lot of alternatives out there, be sure to check them out to wide your horizons:
 
-  - [Serverless framework](https://serverless.com)
+  - [Serverless framework](https://serverless.com) (the most famous, works also for other cloud providers!)
   - [Apex framework](http://apex.run)
   - [Dawson.sh](https://github.com/dawson-org/dawson-cli)
   - [Cloudformation](https://aws.amazon.com/cloudformation) or [Terraform](https://www.terraform.io) (If you really want to go low level)
@@ -55,4 +55,4 @@ Writing Lambda code sometimes ends up in a lot of duplication around things like
 error management, response creation, input parsing, etc.
 
 If you end up feeling that there should be a better way to write your Lambda code,
-check out [Middy](https://middy.js.org/), a middleware engine for AWS Lambda in Node.js
+check out [🛵 Middy](https://middy.js.org), a middleware engine for AWS Lambda in Node.js.

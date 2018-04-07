@@ -24,16 +24,13 @@ In this lesson we will learn how to consume messages from an SQS queue, how to w
 
 ## 08.01 - Consuming messages from an SQS queue
 
-You can consume a message from an SQS queue in a Lambda function by using the AWS
-SDK.
+You can consume a message from an SQS queue in a Lambda function by using the AWS SDK.
 
 The idea is that you start by pulling the queue for one or more messages, then you process the received payload,
-finally when the processing is done, you remove the message(s) from the queue to mark the job as
-completed.
+finally when the processing is done, you remove the message(s) from the queue to mark the job as completed.
 
 SQS, in fact, by default will put messages back in the queue if they are not deleted by the worker.
-This happens because the worker might crash before completing the processing of the message and the
-queue tries to protect you from losing messages.
+This happens because the worker might crash before completing the processing of the message and the queue system tries to protect you from losing messages.
 
 Using the AWS SDK, you can pull for a message as follows:
 
@@ -79,8 +76,7 @@ SQS will look like the following:
 ```
 ([View this JSON in the browser](https://gist.githubusercontent.com/lmammino/ae072002e64b1e1e8372aac9b0158ea4/raw/85ffc54239e1134e4395955269311160cc01660d/example.json))
 
-So in order to get the real content of the message you will need to JSON-parse-it™
-twice as follows:
+So in order to get the real content of the message you will need to JSON-parse-it™ twice as follows:
 
 
 ```javascript
@@ -117,11 +113,9 @@ As part of this lesson we will need to send an email from a Lambda function.
 AWS offers a complete service for sending transactional emails called
 [Simple Email Service (SES)](https://aws.amazon.com/ses/).
 
-Although this is the right service to use in production for sending emails in the
-AWS cloud, it takes sometime to be configured and you will need a custom domain registered.
+Although this is the right service to use in production for sending emails in the AWS cloud, it takes sometime to be configured and you will need a custom domain registered.
 
-Also, for the sake of this tutorial, we don't really need to send real email to real people,
-so a simple SMTP test server is more than enough for our purposes.
+Also, for the sake of this tutorial, we don't really need to send real email to real people, so a simple SMTP test server is more than enough for our purposes.
 
 A very good (and mostly free) cloud based SMTP test server is [Mailtrap](https://mailtrap.io).
 
@@ -135,7 +129,11 @@ later:
   - `Password`:	yyy
 
 In order to send emails from Node.js we can use the [nodemailer](http://npm.im/nodemailer) module
-in combination with the [nodemailer-smtp-transport](http://npm.im/nodemailer-smtp-transport) companion module.
+in combination with the [nodemailer-smtp-transport](http://npm.im/nodemailer-smtp-transport) companion module, so be sure to install them in your `src` folder:
+
+```bash
+npm i --save nodemailer nodemailer-smtp-transport
+```
 
 Here's a quick 'n dirty example on how to send a quick email with `nodemailer` using
 SMTP:
@@ -157,7 +155,7 @@ const mailOptions = {
   from: 'some@one.com',
   to: 'somebody@else.com',
   subject: 'Just catching up...',
-  text: 'Hey how are you today?'
+  text: 'Hey buddy, how are you today?'
 }
 
 transporter.sendMail(mailOptions, (err, info) => {
@@ -176,9 +174,9 @@ It should be pretty much obvious at this point that we need a way to manage conf
 coming from the outside.
 
 Ideally we don't want to embed these parameters directly in our `template.yaml`, but
-have some facility to inject them from the outside at deploy time, maybe from environment variables.
+have some facility to inject them from the outside at deploy time, maybe from local environment variables.
 
-Turns out that in SAM (and in Cloudformation), there is the concept of generic parameters.
+Turns out that in SAM (and in Cloudformation), there is a concept of "generic parameters".
 
 That's how we can add all the parameters we need for this lesson in our `template.yaml`:
 
@@ -207,12 +205,9 @@ Resources:
 # ...
 ```
 
-From now on, every time we deploy we have to specify values for these parameters,
-which is a bit annoying.
+From now on, every time we deploy we have to specify values for these parameters, which is a bit annoying.
 
-A strategy I often use in those cases is to create a file called `.env` (which I immediately add
-to my `.gitignore` to make sure I don't commit it by mistake! 😅) that contains
-the values for all the variables:
+A strategy I often use in those cases is to create a file called `.env` (which I immediately add to my `.gitignore` to make sure I don't commit it by mistake! 😅) that contains the values for all the variables:
 
 ```bash
 # .env
@@ -227,6 +222,8 @@ export SMTP_PASSWORD="yyy"
 
 > 💡 **TIP**: If you do this, be sure to replace the `DEPLOYMENT_BUCKET`, `SMTP_USERNAME` and `SMTP_PASSWORD` with your actual value.
 
+> ⚠️ **CAUTION**: This new `.env` file is not the same you might be already using if you are using the [helper container](https://github.com/lucpod/serverless-workshop-helper-container). In order to differentiate between them, I would suggest you to store this new one inside the `lambda` folder.
+
 Now when you start your development session you can run:
 
 ```bash
@@ -239,7 +236,6 @@ So now, for the entire duration of your shell session you can use the following 
 
 ```bash
 sam deploy \
-  --region eu-west-1 \
   --template-file packaged.yaml \
   --stack-name $STACK_NAME \
   --capabilities CAPABILITY_IAM \
@@ -251,12 +247,10 @@ sam deploy \
     "SmtpPassword=$SMTP_PASSWORD"
 ```
 
-> 💡 **TIP**: You can update your deploy script (if you created one previously) to
-include these changes.
+> 💡 **TIP**: You can update your deploy script (if you created one previously) to include these changes.
 
 > 💡 **TIP**: In real production apps it can be a good idea to store these parameters
-in AWS by using dedicated services like [Systems Manager Parameter Store](http://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html) or [Config](https://aws.amazon.com/config). With those services you can also store these values as encrypted strings
-and fine tune the level of access to different users or systems.
+in AWS by using dedicated services like [Systems Manager Parameter Store](http://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html) or [Config](https://aws.amazon.com/config) or even the new [Secret Manager](https://aws.amazon.com/blogs/aws/aws-secrets-manager-store-distribute-and-rotate-credentials-securely/). With most of these services you can also store these values as encrypted strings and fine tune the level of access to different users or systems.
 
 
 ## 08.04 - Defining the worker Lambda
@@ -336,11 +330,9 @@ Resources:
   # ...
 ```
 
-The new things to notice here is how we are defining environment variables by
-referencing the SAM parameters we defined in the previous section.
+The new things to notice here is how we are defining environment variables by referencing the SAM parameters we defined in the previous section (using the `!Ref` operator).
 
-With this approach all the parameters values will be available in the Lambda code
-as environment variables.
+With this approach all the parameters values will be available in the Lambda code as environment variables.
 
 For example you can access the SMTP password with:
 
@@ -348,8 +340,7 @@ For example you can access the SMTP password with:
 process.env.SMTP_PASSWORD
 ```
 
-Another new thing here is the `Schedule` event. The schedule event allows us to
-execute a Lambda at periodic intervals (in this case every minute).
+Another new thing here is the `Schedule` event. The schedule event allows us to execute a Lambda at periodic intervals (in this case every minute).
 
 The syntax is very simple in this case, for more elaborate schedule rules you can even use
 [cron expressions](http://docs.aws.amazon.com/lambda/latest/dg/tutorial-scheduled-events-schedule-expressions.html).
@@ -393,8 +384,7 @@ exports.sendMailWorker = (event, context, callback) => {
 If you feel lost or if you need some inspiration you can consult my implementation
 in [`resources/lambda/worker-lambda`](/resources/lambda/worker-lambda/src/index.js).
 
-When you feel comfortable enough with the code you can deploy (this time make
-sure you have all the environment variables in your shell session):
+When you feel comfortable enough with the code you can deploy (this time make sure you have all the environment variables in your shell session):
 
 ```bash
 sam package \
@@ -403,7 +393,6 @@ sam package \
   --output-template-file packaged.yaml
 
 sam deploy \
-  --region eu-west-1 \
   --template-file packaged.yaml \
   --stack-name $STACK_NAME \
   --capabilities CAPABILITY_IAM \
@@ -420,6 +409,8 @@ sam deploy \
 
 If you did everything correctly, every time you purchase a new ticket, after one or more
 minutes you should see an email appearing in your *Mailtrap* account.
+
+> ⚠️ **CAUTION**: Polling SQS every minute is not for free. If you keep this running for few hours you will still be inside the free tier period, but if you leave it running forever you might start to reach a paid level. So be sure to disable the schedule for the worker lambda (or to remove the lambda entirely) when you are finished with this tutorial 🙄
 
 
 ## Closing off
