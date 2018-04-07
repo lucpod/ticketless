@@ -126,14 +126,14 @@ At this point you can deploy the new stack with the usual commands:
 
 ```bash
 sam package --template-file template.yaml --s3-bucket $DEPLOYMENT_BUCKET --output-template-file packaged.yaml
-sam deploy --region eu-west-1 --template-file packaged.yaml --stack-name $STACK_NAME --capabilities CAPABILITY_IAM
+sam deploy --template-file packaged.yaml --stack-name $STACK_NAME --capabilities CAPABILITY_IAM
 ```
 
 If everything went fine you should be now able to list all the available SNS topics from
 the AWS cli and see our newly created topic:
 
 ```bash
-aws sns list-topics --region eu-west-1
+aws sns list-topics
 ```
 
 It should output something like this:
@@ -205,7 +205,7 @@ as usual:
 
 ```bash
 sam package --template-file template.yaml --s3-bucket $DEPLOYMENT_BUCKET --output-template-file packaged.yaml
-sam deploy --region eu-west-1 --template-file packaged.yaml --stack-name $STACK_NAME --capabilities CAPABILITY_IAM
+sam deploy --template-file packaged.yaml --stack-name $STACK_NAME --capabilities CAPABILITY_IAM
 ```
 
 If we try now to purchase a new ticket nothing visible really happens so that we can sure
@@ -215,7 +215,7 @@ Even if we implemented the SNS publishing correctly there's no topic *subscripti
 for messages in our current setup, so when a message is published it simply gets discarded.
 
 An easy way to test this step is to create an email subscription so that we can receive
-an email everytime a new message is published in the `ticketPurchased` topic.
+an email every time a new message is published in the `ticketPurchased` topic.
 
 You can create an email subscription with the following command:
 
@@ -238,7 +238,9 @@ If the command worked correctly you should see the following output:
 ```
 
 To confirm the subscription, log in in your email account and check the last email from **AWS Notifications**.
-There should be there a link to click.
+There should be there a link to click. Once you do that you should see a page like this:
+
+![Subscription confirmed](subscription-confirmed.png)
 
 After that you should be able to list all the currently available subscriptions with the following command:
 
@@ -249,12 +251,12 @@ aws sns list-subscriptions-by-topic --topic-arn <your topic ARN>
 Now try again to purchase a ticket from the frontend application. This time, after few
 seconds, you should receive a message in your inbox!
 
-> 💡 **TIP**: if you want to delete the subscription you can do it so with the [`unsubscribe`](http://docs.aws.amazon.com/cli/latest/reference/sns/unsubscribe.html) command
+> 💡 **TIP**: if you want to delete the subscription you can do it so with the [`unsubscribe`](http://docs.aws.amazon.com/cli/latest/reference/sns/unsubscribe.html) command, or, if you still have the AWS subscription confirmation page open, you'll find an 'unsubscribe' link there.
 
 
 ## 07.04 - Connect SQS to SNS
 
-We now have everything in place to fire SNS messages in our new topic.
+Now we have everything in place to fire SNS messages in our new topic.
 
 The next logical step is to create a queue and subscribe it to the SNS topic.
 
@@ -284,8 +286,7 @@ TicketPurchasedTopic:
 As you might have learned already, anything that happens in AWS needs an explicit permission
 in the form of a policy. The same goes for queues!
 
-In order to receive a message from some resource a queue need to have a policy that
-explicitly authorises that.
+In order to receive a message from some resource a queue need to have a policy that explicitly authorizes that.
 
 So, let's create this `QueuePolicy` in the resource block of our `template.yaml`:
 
@@ -314,13 +315,13 @@ That's finally it! Ready to re-deploy:
 
 ```bash
 sam package --template-file template.yaml --s3-bucket $DEPLOYMENT_BUCKET --output-template-file packaged.yaml
-sam deploy --region eu-west-1 --template-file packaged.yaml --stack-name $STACK_NAME --capabilities CAPABILITY_IAM
+sam deploy --template-file packaged.yaml --stack-name $STACK_NAME --capabilities CAPABILITY_IAM
 ```
 
 If everything went fine you should now be able to see the new queue with the following command:
 
 ```bash
-aws sqs list-queues --region eu-west-1
+aws sqs list-queues
 ```
 
 Which should output something like this:
@@ -364,7 +365,7 @@ This should output something like:
 }
 ```
 
-The number of messages should increase while you keep purchasing tickets!
+The number of messages should increase if you keep purchasing new tickets!
 
 
 ---
