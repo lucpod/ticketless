@@ -195,16 +195,3 @@ exports.purchaseTicket = (event, context, callback) => {
     body: JSON.stringify({success: true})
   })
 }
-
-exports.cors = (event, context, callback) => {
-  callback(null, {
-    statusCode: 200,
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': '*',
-      'Access-Control-Allow-Headers': 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'
-    },
-    body: ''
-  })
-}

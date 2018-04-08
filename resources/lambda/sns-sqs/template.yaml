@@ -2,6 +2,15 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: 'AWS::Serverless-2016-10-31'
 Description: Api and services for the ticketless application
 
+Globals:
+  Function:
+    Runtime: nodejs8.10
+  Api:
+    Cors:
+      AllowMethods: "'GET,POST,OPTIONS'"
+      AllowHeaders: "'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range'"
+      AllowOrigin: "'*'"
+
 Resources:
 
   GigsApiRole:
@@ -71,9 +80,7 @@ Resources:
     Properties:
       CodeUri: ./src
       Handler: index.listGigs
-      Runtime: nodejs8.10
       Role: !GetAtt GigsApiRole.Arn
-
       Events:
         Endpoint:
           Type: Api
@@ -86,7 +93,6 @@ Resources:
     Properties:
       CodeUri: ./src
       Handler: index.gig
-      Runtime: nodejs8.10
       Role: !GetAtt GigsApiRole.Arn
       Events:
         Endpoint:
@@ -100,7 +106,6 @@ Resources:
     Properties:
       CodeUri: ./src
       Handler: index.purchaseTicket
-      Runtime: nodejs8.10
       Role: !GetAtt GigsApiRole.Arn
       Environment:
         Variables:
@@ -111,19 +116,6 @@ Resources:
           Properties:
             Path: /purchase
             Method: post
-
-  CORS:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: ./src
-      Handler: index.cors
-      Runtime: nodejs8.10
-      Events:
-        Endpoint:
-          Type: Api
-          Properties:
-            Path: /{path+}
-            Method: options
 
 Outputs:
   endpoint:

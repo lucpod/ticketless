@@ -182,7 +182,6 @@ Resources:
     Properties:
       CodeUri: ./src
       Handler: index.purchaseTicket
-      Runtime: nodejs8.10
       Role: !GetAtt GigsApiRole.Arn
       Events:
         Endpoint:
@@ -212,62 +211,57 @@ If you did everything correctly in the previous steps, you should see... this er
 
 This errors happens as part of the CORS protocol.
 
+> 💡 **TIP**: CORS stands for [Cross-Origin Resource Sharing](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS)
+
 When some JavaScript code in the browser invokes an XHR request to another domain, the browser might issue a [Pre-Flight request](https://developer.mozilla.org/en-US/docs/Glossary/Preflight_request) to check if the destination API can receive call from the current domain (the one where the website originating the request is running).
 
-During Pre-flight the browser sends an OPTIONS request before your actual request gets sent. The browser expects to receive as response to this request a set of headers that specify which domains can invoke the API and which methods (POST, PUT, etc.) can be used (these are often called *"Access Control rules"*). These headers are validated against the current request and if it matches the given rules, then the original request is actually performed.
+During Pre-flight the browser sends an OPTIONS request before your actual request gets sent. The browser expects to receive as response to this request a set of headers that specify which domains can invoke the API, which headers ('Content-Type', etc.) can be sent and which HTTP methods (POST, PUT, etc.) can be used. These are often called *"Access Control rules"*. These headers are validated against the current request and if it matches the given rules, then the original request is actually performed.
 
 > 💡 **TIP**: If you need more detail on how CORS actually works, check out this brilliant article: [Understanding CORS and Pre-Flight](http://www.authenticdesign.co.uk/understanding-cors-and-pre-flight/)
 
-
 In order to make our API work, we need to add CORS support to our application.
 
-There are different ways to do this, and there's also a ["native" way](https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#cors-configuration), but it works only if you define a complete swagger file for your APIs, so we are going to use another method.
-
-Our method is a bit more crafty, but allows us to have more control (and to understand better how CORS actually works). We will need to create a Lambda that can respond to the Pre-Flight Request and map it to any `OPTIONS` request in API Gateway.
-
-This is the Lambda code you need to add in the `index.js` file:
-
-```javascript
-// ...
-
-exports.cors = (event, context, callback) => {
-  callback(null, {
-    statusCode: 200,
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': '*',
-      'Access-Control-Allow-Headers': 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'
-    },
-    body: ''
-  })
-}
-```
-
-And this is the code to add to the template file to expose this Lambda to any `OPTIONS` request.
+The easiest way to do this is to expand our `Global` configuration in the `template.yaml` and add a piece of specific CORS configuration:
 
 ```yaml
+# template.yaml
 # ...
 
-Resources:
+Globals:
+  Function:
+    Runtime: nodejs8.10
+  Api:
+    Cors:
+      AllowMethods: "'*'"
+      AllowHeaders: "'*'"
+      AllowOrigin: "'*'"
 
-  # ...
-
-  CORS:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: ./src
-      Handler: index.cors
-      Runtime: nodejs8.10
-      Events:
-        Endpoint:
-          Type: Api
-          Properties:
-            Path: /{path+}
-            Method: options
+# ...
 ```
 
-> 💡 **TIP**: the syntax `/{path+}` in the `Path` parameter means that the request can match any path in order to trigger the lambda as long as the method is `OPTION` (since we are specifying the constraint).
+With this configuration we are enabling Cross Origin Resource Sharing for every method, header and origin.
+
+It's a good practice to be more restrictive and allow only what's strictly necessary to make your app work, so realistically your configuration should look like the following:
+
+```yaml
+# template.yaml
+# ...
+
+Globals:
+  Function:
+    Runtime: nodejs8.10
+  Api:
+    Cors:
+      AllowMethods: "'GET,POST,OPTIONS'"
+      AllowHeaders: "'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range'"
+      AllowOrigin: "'http://<FRONTEND_BUCKET>.s3-website-<AWS_REGION>.amazonaws.com'"
+
+# ...
+```
+
+Be sure to replace `<FRONTEND_BUCKET>` and `<AWS_REGION>` with your actual values.
+
+> 💡 **TIP**: You might have noticed that we are *double quoting* the attribute values (`"'some value'"`), this is because the HTTP spec requires the value of these header properties to be quoted strings.
 
 Now we are ready to deploy our app again:
 

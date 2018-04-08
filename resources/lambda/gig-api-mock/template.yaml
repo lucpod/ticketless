@@ -2,6 +2,10 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: 'AWS::Serverless-2016-10-31'
 Description: Api and services for the ticketless application
 
+Globals:
+  Function:
+    Runtime: nodejs8.10
+
 Resources:
 
   listGigs:
@@ -9,7 +13,6 @@ Resources:
     Properties:
       CodeUri: ./src
       Handler: index.listGigs
-      Runtime: nodejs8.10
       Events:
         Endpoint:
           Type: Api
@@ -22,7 +25,6 @@ Resources:
     Properties:
       CodeUri: ./src
       Handler: index.gig
-      Runtime: nodejs8.10
       Events:
         Endpoint:
           Type: Api

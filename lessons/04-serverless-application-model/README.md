@@ -71,6 +71,10 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: 'AWS::Serverless-2016-10-31'
 Description: A Mock API to return all gigs or a single gig
 
+Globals:
+  Function:
+    Runtime: nodejs8.10
+
 Resources:
 
   listGigs:
@@ -78,7 +82,6 @@ Resources:
     Properties:
       CodeUri: ./src
       Handler: index.listGigs
-      Runtime: nodejs8.10
       Events:
         Endpoint:
           Type: Api
@@ -91,7 +94,6 @@ Resources:
     Properties:
       CodeUri: ./src
       Handler: index.gig
-      Runtime: nodejs8.10
       Events:
         Endpoint:
           Type: Api
@@ -113,13 +115,13 @@ Let's analyze the content of this file:
 
   - `Description` allows you to specify an arbitratry description for the Cloudformation stack that will be deployed with this template.
 
+  - `Globals` allows you to specify attributes that are shared across all your stack. In this case the runtime environment that you want to use in all the lambda functions (Node.js version 8.10). This config acts as a default set of options, in fact, resources might override some of these values if needed (e.g. specifying a different runtime for a given lambda). Find out more about *Globals* in the [official SAM docs](https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#globals-section).
+
   - `Resources` is the most important part of the template and allows us to specify all the different resources that we want to use in our application (in this case 2 lambda functions).
 
-  - A Lamdba function in SAM is identified by the `Type` `AWS::Serverless::Function` and a set of `Properties`.
+  - A Lambda function in SAM is identified by the `Type` `AWS::Serverless::Function` and a set of `Properties`.
 
   - The property `CodeUri` is used to specify where the code for the lambda is stored, while `Handler` is used to indicate which file and function needs to be loaded by to run the Lambda. This parameter uses the format `fileName.functionName`. For example when we specify `index.listGigs`, the Lambda runtime will load the file `index.js` in our code path and from this file import the function `listGigs`.
-
-  - `Runtime` indicates which runtime we want to use to run the code (in our case Node.js version 8.10)
 
   - `Events` is a dictionary that describes all the events that will trigger the execution of the Lambda function. Every event is identified by an arbitrary name (in our case we choose `Endpoint`). An event object needs to have a `Type` (in the case of API Gateway it's simply `Api`) and a set of `Properties`. Properties will change based on the type of event, for Api events we specified a `Path` and a `Method`.
 

@@ -20,6 +20,15 @@ Parameters:
     Description: "The password to authenticate to the SMTP server"
     Type: String
 
+Globals:
+  Function:
+    Runtime: nodejs8.10
+  Api:
+    Cors:
+      AllowMethods: "'GET,POST,OPTIONS'"
+      AllowHeaders: "'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range'"
+      AllowOrigin: "'*'"
+
 Resources:
 
   GigsApiRole:
@@ -115,7 +124,6 @@ Resources:
     Properties:
       CodeUri: ./src
       Handler: index.listGigs
-      Runtime: nodejs8.10
       Role: !GetAtt GigsApiRole.Arn
 
       Events:
@@ -130,7 +138,6 @@ Resources:
     Properties:
       CodeUri: ./src
       Handler: index.gig
-      Runtime: nodejs8.10
       Role: !GetAtt GigsApiRole.Arn
       Events:
         Endpoint:
@@ -144,7 +151,6 @@ Resources:
     Properties:
       CodeUri: ./src
       Handler: index.purchaseTicket
-      Runtime: nodejs8.10
       Role: !GetAtt GigsApiRole.Arn
       Environment:
         Variables:
@@ -156,25 +162,11 @@ Resources:
             Path: /purchase
             Method: post
 
-  CORS:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: ./src
-      Handler: index.cors
-      Runtime: nodejs8.10
-      Events:
-        Endpoint:
-          Type: Api
-          Properties:
-            Path: /{path+}
-            Method: options
-
   SendMailWorker:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ./src
       Handler: index.sendMailWorker
-      Runtime: nodejs8.10
       Role: !GetAtt SendMailWorkerRole.Arn
       Environment:
         Variables:
