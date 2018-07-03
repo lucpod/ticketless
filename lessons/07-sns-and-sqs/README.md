@@ -33,7 +33,7 @@ In [AWS's own words](https://aws.amazon.com/sns/):
 
 ![SNS functionality diagram](https://d1.awsstatic.com/diagrams/product-page-diagrams/sns_diagram_1.7fc320874597e8c1bf3b0dd845fe89176aef0cda.png)
 
-In SNS messages are trasnmitted through communication channel identified as *topics*. When you create a topic, different services can *publish* or *subscribe* (receive) events over it.
+In SNS messages are transmitted through communication channel identified as *topics*. When you create a topic, different services can *publish* or *subscribe* (receive) events over it.
 
 In our project we will use SNS to just dispatch a `TicketPurchased` event, leaving to other systems the role of picking the message up and performing other actions with it.
 
